@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import UserAvatar from "@/components/UserAvatar";
 import { Home, Grid, Search, ShoppingBag, User } from "lucide-react";
 
 interface MobileBottomNavProps {
@@ -60,21 +62,27 @@ export default function MobileBottomNav({
         <span className="text-[10px] font-bold">Bag</span>
       </button>
 
-      <button
-        onClick={() => setIsAuthModalOpen(true)}
-        className="flex flex-col items-center gap-0.5 text-zinc-800 hover:text-amber-600 transition"
-      >
-        {user ? (
-          <div className="w-5 h-5 rounded-full bg-amber-400 text-zinc-950 flex items-center justify-center font-bold text-[10px]">
-            {user.name.charAt(0)}
+      {user ? (
+        <Link
+          href="/orders"
+          className="flex flex-col items-center gap-0.5 text-zinc-800 hover:text-amber-600 transition"
+        >
+          <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center font-bold text-[10px]">
+            <UserAvatar user={user} className="w-full h-full text-[9px]" />
           </div>
-        ) : (
+          <span className="text-[10px] font-bold truncate max-w-[50px] text-zinc-900">
+            {user.name.split(" ")[0]}
+          </span>
+        </Link>
+      ) : (
+        <button
+          onClick={() => setIsAuthModalOpen(true)}
+          className="flex flex-col items-center gap-0.5 text-zinc-800 hover:text-amber-600 transition"
+        >
           <User className="w-5 h-5" />
-        )}
-        <span className="text-[10px] font-medium truncate max-w-[50px]">
-          {user ? user.name.split(" ")[0] : "Account"}
-        </span>
-      </button>
+          <span className="text-[10px] font-medium">Account</span>
+        </button>
+      )}
     </div>
   );
 }

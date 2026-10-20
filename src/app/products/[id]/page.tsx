@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
@@ -31,7 +31,7 @@ import {
   ArrowUpDown
 } from "lucide-react";
 
-export default function ProductDetailPage() {
+function ProductDetailContent() {
   const routeParams = useParams();
   const productId = (routeParams?.id as string) || "";
   const { addToCart, items, setIsCartOpen } = useCart();
@@ -741,5 +741,19 @@ export default function ProductDetailPage() {
       <AuthModal />
       <Toast />
     </div>
+  );
+}
+
+export default function ProductDetailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+        </div>
+      }
+    >
+      <ProductDetailContent />
+    </Suspense>
   );
 }

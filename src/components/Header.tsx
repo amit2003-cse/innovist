@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import UserAvatar from "@/components/UserAvatar";
@@ -206,13 +207,17 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
                       </div>
 
                       <div className="space-y-1.5 text-zinc-700 pt-1">
-                        <div className="py-1.5 px-2 rounded-lg hover:bg-zinc-50 cursor-pointer flex items-center justify-between">
+                        <Link
+                          href="/orders"
+                          onClick={() => setAccountMenuOpen(false)}
+                          className="py-1.5 px-2 rounded-lg hover:bg-zinc-50 cursor-pointer flex items-center justify-between transition"
+                        >
                           <span className="flex items-center gap-2">
                             <Package className="w-3.5 h-3.5 text-zinc-400" />
                             My Orders
                           </span>
                           <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
-                        </div>
+                        </Link>
                         <button
                           onClick={() => {
                             logout();
