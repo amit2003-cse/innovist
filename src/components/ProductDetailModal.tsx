@@ -243,30 +243,16 @@ export default function ProductDetailModal({
               )}
             </div>
 
-            {/* Slide Pagination Dots */}
-            <div className="flex items-center gap-1.5 mt-3 z-10">
-              {[0, 1, 2].map((idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveSlide(idx)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    activeSlide === idx ? "w-6 bg-zinc-900" : "w-1.5 bg-zinc-300 hover:bg-zinc-400"
-                  }`}
-                  aria-label={`Slide ${idx + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* Units Sold & Review Pill (Matches Innovist Screenshot 3) */}
-            <div className="mt-3 w-full flex items-center justify-between text-xs px-2 py-1.5 rounded-xl bg-zinc-900 text-white font-bold shadow-xs">
-              <span className="text-[11px] text-zinc-200 font-medium tracking-wide">
+            {/* Units Sold & Review Pill (Matches Innovist Screenshot 1 Exactly) */}
+            <div className="w-full flex items-center justify-between text-xs px-3.5 py-2.5 bg-[#2B2B2B] text-white font-bold rounded-b-2xl mt-4">
+              <span className="text-xs text-white font-bold tracking-wide">
                 464038+ units sold
               </span>
-              <div className="flex items-center gap-1 text-[11px]">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                <span className="text-amber-400 font-bold">{product.rating}</span>
-                <span className="text-zinc-400">|</span>
-                <span className="text-zinc-300 font-normal">{product.reviewsCount}</span>
+              <div className="flex items-center gap-1.5 text-xs bg-white text-zinc-900 px-2.5 py-0.5 rounded-full font-bold shadow-2xs">
+                <Star className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+                <span className="text-emerald-700 font-extrabold">{product.rating}</span>
+                <span className="text-zinc-300">|</span>
+                <span className="text-zinc-600 font-medium">{product.reviewsCount}</span>
               </div>
             </div>
           </div>
@@ -329,34 +315,34 @@ export default function ProductDetailModal({
             {/* 3. SELECT VARIANT (Matches Innovist Screenshot 3) */}
             <div>
               <h3 className="text-xs font-bold text-zinc-900 mb-2">Select Variant</h3>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-2 pt-2 -mt-2">
                 {variants.map((v, i) => {
                   const isSelected = selectedVariant === i;
                   return (
                     <button
                       key={i}
                       onClick={() => setSelectedVariant(i)}
-                      className={`relative p-2 rounded-xl text-left border transition-all flex flex-col justify-between ${
+                      className={`relative min-w-[155px] p-2.5 rounded-xl text-left border transition-all flex flex-col justify-between shrink-0 ${
                         isSelected
-                          ? "border-amber-600 bg-amber-50/50 shadow-2xs"
+                          ? "border-[#E53935] bg-white shadow-2xs"
                           : "border-zinc-200 bg-white hover:border-zinc-300"
                       }`}
                     >
                       {v.isPopular && (
-                        <span className="absolute -top-2 left-2 text-[9px] font-black uppercase tracking-wide bg-rose-600 text-white px-1.5 py-0.2 rounded shadow-2xs">
+                        <span className="absolute -top-2 left-2 text-[9px] font-black uppercase tracking-wide bg-[#E53935] text-white px-2 py-0.5 rounded-full shadow-2xs">
                           Most Popular
                         </span>
                       )}
                       <div>
-                        <p className="font-bold text-[11px] text-zinc-900 leading-tight">
+                        <p className="font-bold text-xs text-zinc-900 leading-tight">
                           {v.title}
                         </p>
                         <p className="text-[10px] text-zinc-400 mt-0.5">{v.unitPrice}</p>
                       </div>
-                      <div className="mt-2 flex items-baseline gap-1">
-                        <span className="font-extrabold text-xs text-zinc-900">₹{v.price}</span>
-                        <span className="text-[9px] text-zinc-400 line-through">₹{v.mrp}</span>
-                        <span className="text-[9px] font-bold text-emerald-600 ml-auto">
+                      <div className="mt-3 flex items-baseline justify-between gap-1">
+                        <span className="font-black text-sm text-zinc-900">₹{v.price}</span>
+                        <span className="text-[11px] text-zinc-400 line-through">₹{v.mrp}</span>
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">
                           {v.discount}
                         </span>
                       </div>
@@ -675,22 +661,14 @@ export default function ProductDetailModal({
           </div>
         </div>
 
-        {/* 10. STICKY BOTTOM BAR (Matches Innovist Screenshot 4 & 5) */}
-        <div className="sticky bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-zinc-200 z-40 flex items-center justify-between gap-3 shadow-lg">
-          <div>
-            <span className="text-[10px] text-zinc-400 block font-semibold leading-none">Price:</span>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className="text-base font-black text-zinc-950">₹{currentVariant.price}</span>
-              <span className="text-[10px] text-zinc-400 line-through">₹{currentVariant.mrp}</span>
-            </div>
-          </div>
-
+        {/* 10. FULL-WIDTH STICKY YELLOW ADD TO CART BUTTON (Matches Image 1 Exactly) */}
+        <div className="sticky bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-50 shadow-lg">
           <button
             onClick={handleAddAndOpenCart}
-            className="flex-1 py-3 px-4 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-xs tracking-wider uppercase transition flex items-center justify-center gap-2 shadow-sm active:scale-98"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wide uppercase transition flex items-center justify-center gap-2 shadow-xs active:scale-98"
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>{inCart ? "Add Another & Go to Bag" : "Add to Cart"}</span>
+            <ShoppingBag className="w-5 h-5" />
+            <span>{inCart ? "In Bag • Add Another" : "Add to Cart"}</span>
           </button>
         </div>
       </div>

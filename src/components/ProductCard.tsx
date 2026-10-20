@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { FaceCream } from "@/data/faceCreams";
 import { useCart } from "@/context/CartContext";
 import FaceCreamJar from "./FaceCreamJar";
@@ -21,8 +22,8 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
     <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group w-full h-full">
       {/* Upper Area: Visual & Badges */}
       <div>
-        <div
-          onClick={() => onQuickView(product)}
+        <Link
+          href={`/products/${product.id}`}
           className={`relative cursor-pointer w-full pt-3 pb-3 sm:pt-4 sm:pb-5 px-2 sm:px-4 bg-gradient-to-b ${product.accentColor} rounded-t-2xl sm:rounded-t-3xl flex flex-col items-center justify-center transition-all group-hover:brightness-95`}
         >
           {/* Best Seller / Tag Badge (Matches Innovist Screenshot) */}
@@ -52,17 +53,17 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
               {product.reviewsCount}
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Product Details Section */}
         <div className="p-2.5 sm:p-4 flex flex-col flex-1">
           {/* Title */}
-          <h3
-            onClick={() => onQuickView(product)}
+          <Link
+            href={`/products/${product.id}`}
             className="font-extrabold text-xs sm:text-sm md:text-base text-zinc-900 group-hover:text-amber-800 transition line-clamp-2 cursor-pointer leading-tight tracking-tight min-h-[32px] sm:min-h-[40px]"
           >
             {product.name}
-          </h3>
+          </Link>
 
           {/* Subtitle / Volume */}
           <p className="text-[10px] sm:text-xs text-zinc-500 mt-0.5 truncate">

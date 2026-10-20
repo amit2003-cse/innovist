@@ -1,7 +1,8 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
 import { useCart } from "@/context/CartContext";
 import FaceCreamJar from "@/components/FaceCreamJar";
@@ -11,7 +12,6 @@ import CartDrawer from "@/components/CartDrawer";
 import SearchModal from "@/components/SearchModal";
 import AuthModal from "@/components/AuthModal";
 import Toast from "@/components/Toast";
-import MobileBottomNav from "@/components/MobileBottomNav";
 import {
   Star,
   ChevronLeft,
@@ -26,19 +26,14 @@ import {
   ArrowLeft,
   Plus,
   Minus,
-  Sparkles,
+  Search,
   Filter,
-  ArrowUpDown,
-  ThumbsUp,
-  Camera
+  ArrowUpDown
 } from "lucide-react";
 
-interface ProductPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function ProductDetailPage({ params }: ProductPageProps) {
-  const unwrappedParams = use(params);
+export default function ProductDetailPage() {
+  const routeParams = useParams();
+  const productId = (routeParams?.id as string) || "";
   const { addToCart, items, setIsCartOpen } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -46,8 +41,8 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   const product =
     FACE_CREAMS.find(
       (p) =>
-        p.id === unwrappedParams.id ||
-        p.id.toLowerCase().includes(unwrappedParams.id.toLowerCase())
+        p.id === productId ||
+        p.id.toLowerCase().includes(productId.toLowerCase())
     ) || FACE_CREAMS[0];
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -115,7 +110,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
       a: `${product.name} is formulated with high-potency bio-actives to repair compromised moisture barriers, diminish pigmentation, and lock in hydration for up to 72 hours. It balances epidermal moisture without clogging pores.`,
     },
     {
-      q: "Is this formula suitable for beginners?",
+      q: "Is this Vitamin C formula suitable for beginners?",
       a: "Yes, absolutely! The formula is buffered with soothing colloidal oat and skin-identical ceramides, making it safe for first-time active ingredient users and sensitive skin types.",
     },
     {
@@ -123,27 +118,28 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
       a: "Yes. For maximum barrier strength and brightening results, apply twice daily—in your morning routine before sunscreen, and in your nighttime routine as the final sealing step.",
     },
     {
-      q: "How does this formulation reduce hyperpigmentation?",
+      q: "How does this formula reduce hyperpigmentation?",
       a: "It inhibits tyrosinase activity and blocks melanin transfer to outer skin cells using stabilized antioxidants and acetyl glucosamine, visibly fading dark spots and sun damage within 14 to 28 days.",
     },
     {
-      q: "What are the scientific mechanisms behind its benefits?",
-      a: "It incorporates a physiological 3:1:1:1 lipid ratio (Ceramides, Cholesterol, Free Fatty Acids) that integrates directly into the stratum corneum, restoring structural matrix lipids and halting transepidermal water loss (TEWL).",
+      q: "What are the scientific mechanisms behind Vitamin C's benefits for the skin?",
+      a: "It incorporates stabilized bio-active antioxidants that neutralize free radicals, stimulate collagen synthesis, and accelerate natural epidermal turnover.",
     },
     {
-      q: "Will this help with dark spots and post-acne blemishes?",
-      a: "Yes, clinically proven to fade post-inflammatory hyperpigmentation (PIH) and even out skin tone while strengthening the barrier against future breakouts.",
+      q: "Will this help with dark spots and hyperpigmentation?",
+      a: "Yes, clinically proven to fade post-inflammatory hyperpigmentation (PIH) and even out skin tone while strengthening the barrier against future damage.",
     },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-amber-200 selection:text-amber-900 pb-28 md:pb-24">
+    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-amber-200 selection:text-amber-900 pb-24 md:pb-20">
+      {/* 1. Website Header with Auto-Rotating Announcement Bar (Matches Image 1) */}
       <Header onOpenSearch={() => setIsSearchOpen(true)} />
 
       {/* Main Container */}
-      <main className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-4 flex-1 space-y-8 sm:space-y-12">
+      <main className="w-full max-w-4xl mx-auto px-3 sm:px-6 py-2 flex-1 space-y-6 sm:space-y-10">
         {/* Navigation Breadcrumb / Product Slide Navigation */}
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between text-xs py-1">
           <Link
             href="/"
             className="flex items-center gap-1.5 text-zinc-600 hover:text-black font-bold transition"
@@ -157,7 +153,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             {prevProduct && (
               <Link
                 href={`/products/${prevProduct.id}`}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 font-bold transition shadow-2xs"
+                className="flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 font-bold transition shadow-2xs"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Prev: {prevProduct.shortName}</span>
@@ -167,7 +163,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             {nextProduct && (
               <Link
                 href={`/products/${nextProduct.id}`}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 font-bold transition shadow-2xs"
+                className="flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:border-zinc-400 font-bold transition shadow-2xs"
               >
                 <span className="hidden sm:inline">Next: {nextProduct.shortName}</span>
                 <span className="sm:hidden">Next</span>
@@ -177,162 +173,135 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        {/* 1. PRODUCT SHOWCASE CARD (Top Half) */}
-        <div className="bg-white rounded-3xl border border-zinc-200/90 shadow-xs overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
-          {/* Left: Product Visual Slider */}
-          <div className="lg:col-span-6 relative w-full bg-gradient-to-b from-[#F7F4EB] via-[#F4EFE6] to-[#FAF8F5] pt-12 pb-8 px-4 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-zinc-100">
-            {product.tag && (
-              <div className="absolute top-4 left-4 z-10">
-                <span className="text-[10px] font-black text-white px-2.5 py-1 rounded-full bg-rose-600 shadow-xs tracking-wider uppercase">
-                  {product.tag}
-                </span>
-              </div>
-            )}
+        {/* 2. PRODUCT SHOWCASE CARD (Matches Innovist Screenshot 1 Exactly) */}
+        <div className="bg-white rounded-3xl border border-zinc-200/90 shadow-xs overflow-hidden">
+          {/* Top Hero Image Showcase */}
+          <div className="relative w-full rounded-t-3xl bg-gradient-to-b from-[#F5EFE4] to-[#EBE0D0] pt-6 pb-0 flex flex-col items-center justify-center overflow-hidden">
+            {/* Top-Left Red Badge: Best Seller (Matches Image 1) */}
+            <div className="absolute top-3 left-3 z-10">
+              <span className="text-[11px] font-black text-white px-3 py-1 rounded-full bg-[#E53935] shadow-sm tracking-wider">
+                Best Seller
+              </span>
+            </div>
 
-            {/* Slide Arrows `<` and `>` */}
+            {/* Slide Arrows `<` and `>` (Matches Image 1) */}
             <button
               onClick={() => setActiveSlide((prev) => (prev === 0 ? 2 : prev - 1))}
               aria-label="Previous slide"
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-zinc-800 shadow-md flex items-center justify-center transition"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/70 hover:bg-white text-zinc-800 shadow-md flex items-center justify-center transition"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setActiveSlide((prev) => (prev === 2 ? 0 : prev + 1))}
               aria-label="Next slide"
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-zinc-800 shadow-md flex items-center justify-center transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white/70 hover:bg-white text-zinc-800 shadow-md flex items-center justify-center transition"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
 
-            {/* Slide Content */}
-            <div className="w-full flex items-center justify-center min-h-[280px] sm:min-h-[340px]">
-              {activeSlide === 0 && (
-                <div className="animate-fade-in flex flex-col items-center">
-                  <FaceCreamJar product={product} size="lg" />
-                </div>
-              )}
-              {activeSlide === 1 && (
-                <div className="flex flex-col items-center justify-center text-center p-6 bg-white/85 backdrop-blur-xs rounded-2xl border border-amber-200/60 max-w-xs animate-fade-in shadow-xs">
-                  <Droplet className="w-12 h-12 text-amber-500 mb-2 animate-bounce" />
-                  <h4 className="font-bold text-base text-zinc-900">{product.texture}</h4>
-                  <p className="text-zinc-600 text-xs mt-1.5 leading-relaxed">
-                    Lightweight whipped texture that melts into skin and seals moisture for 72 hours.
-                  </p>
-                </div>
-              )}
-              {activeSlide === 2 && (
-                <div className="flex flex-col items-center justify-center text-center p-6 bg-white/85 backdrop-blur-xs rounded-2xl border border-emerald-200/60 max-w-xs animate-fade-in shadow-xs">
-                  <ShieldCheck className="w-12 h-12 text-emerald-600 mb-2" />
-                  <h4 className="font-bold text-base text-zinc-900">Clinical Formulation</h4>
-                  <p className="text-zinc-600 text-xs mt-1.5 leading-relaxed">
-                    {product.keyIngredientSummary}
-                  </p>
-                </div>
-              )}
+            {/* Bottom-Right Magnifying Glass Zoom Icon (Matches Image 1) */}
+            <button
+              aria-label="Zoom image"
+              className="absolute right-3 bottom-14 z-20 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-zinc-800 shadow-md flex items-center justify-center transition border border-zinc-200"
+            >
+              <Search className="w-4 h-4" />
+            </button>
+
+            {/* Product Center Visual with Podium (Matches Image 1) */}
+            <div className="w-full flex flex-col items-center justify-center min-h-[290px] sm:min-h-[350px] relative">
+              <div className="transform transition-transform animate-fade-in flex flex-col items-center">
+                <FaceCreamJar product={product} size="lg" />
+                {/* Podium Ellipse Shadow */}
+                <div className="w-44 h-4 bg-black/10 rounded-full blur-xs mt-1" />
+              </div>
             </div>
 
-            {/* Pagination Dots */}
-            <div className="flex items-center gap-1.5 mt-3 z-10">
-              {[0, 1, 2].map((idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveSlide(idx)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    activeSlide === idx ? "w-6 bg-zinc-900" : "w-1.5 bg-zinc-300 hover:bg-zinc-400"
-                  }`}
-                  aria-label={`Slide ${idx + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* Units Sold & Reviews Banner (Matches Innovist Screenshot 3) */}
-            <div className="mt-5 w-full max-w-md flex items-center justify-between text-xs px-3.5 py-2 rounded-xl bg-zinc-900 text-white font-bold shadow-xs">
-              <span className="text-[11px] text-zinc-200 font-medium tracking-wide">
+            {/* Bottom Solid Dark Bar: Units Sold & Review Pill (Matches Image 1 Exactly) */}
+            <div className="w-full flex items-center justify-between text-xs px-4 py-2.5 bg-[#2B2B2B] text-white font-bold">
+              <span className="text-xs text-white font-bold tracking-wide">
                 464038+ units sold
               </span>
-              <div className="flex items-center gap-1.5 text-[11px]">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span className="text-amber-400 font-bold">{product.rating}</span>
-                <span className="text-zinc-400">|</span>
-                <span className="text-zinc-300 font-normal">{product.reviewsCount}</span>
+              <div className="flex items-center gap-1.5 text-xs bg-white text-zinc-900 px-2.5 py-0.5 rounded-full font-bold shadow-2xs">
+                <Star className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+                <span className="text-emerald-700 font-extrabold">{product.rating}</span>
+                <span className="text-zinc-300">|</span>
+                <span className="text-zinc-600 font-medium">{product.reviewsCount}</span>
               </div>
             </div>
           </div>
 
-          {/* Right: Product Details, Pricing, Variants, Pincode */}
-          <div className="lg:col-span-6 p-5 sm:p-8 flex flex-col justify-between space-y-5">
+          {/* Product Details Section (Matches Image 1 Exactly) */}
+          <div className="p-4 sm:p-7 space-y-4">
+            {/* Title & Subtitle */}
             <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-zinc-950 tracking-tight leading-snug">
+              <h1 className="text-lg sm:text-2xl font-black text-zinc-950 tracking-tight leading-snug">
                 {product.name}
               </h1>
               <p className="text-xs sm:text-sm text-zinc-500 mt-1">
                 {product.subtitle}
               </p>
 
-              {/* Benefit Pills */}
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {product.benefits.slice(0, 2).map((b, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-semibold"
-                  >
-                    <span>✦</span>
-                    <span>{b}</span>
+              {/* Feature Pills (Matches Image 1) */}
+              <div className="flex flex-wrap gap-2 mt-2.5">
+                <span className="px-3 py-1 rounded-md border border-[#E4D5BC] bg-[#FAF8F5] text-zinc-800 text-xs font-semibold">
+                  Reduces Melanin Production by 2.5x
+                </span>
+                <span className="px-3 py-1 rounded-md border border-[#E4D5BC] bg-[#FAF8F5] text-zinc-800 text-xs font-semibold">
+                  Fades Dark Spots & Pigmentation
+                </span>
+              </div>
+
+              {/* Pricing Row (Matches Image 1 Exactly) */}
+              <div className="mt-3.5">
+                <div className="flex items-baseline gap-2.5">
+                  <span className="text-2xl font-black text-zinc-950">
+                    ₹{currentVariant.price}.00
                   </span>
-                ))}
+                  <span className="text-sm text-zinc-400 line-through">
+                    ₹{currentVariant.mrp}.00
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-0.5">MRP Inclusive of All Taxes.</p>
+                <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800">
+                  <span className="w-4 h-4 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-black">
+                    %
+                  </span>
+                  <span>Save ₹{currentVariant.mrp - currentVariant.price}</span>
+                </div>
               </div>
 
-              {/* Price Row */}
-              <div className="flex items-baseline gap-3 mt-4">
-                <span className="text-3xl font-black text-zinc-950">
-                  ₹{currentVariant.price}.00
-                </span>
-                <span className="text-base text-zinc-400 line-through">
-                  ₹{currentVariant.mrp}.00
-                </span>
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  Save ₹{currentVariant.mrp - currentVariant.price}
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-400 mt-0.5">MRP Inclusive of All Taxes.</p>
-
-              {/* Special Coupon Bar */}
-              <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-200 w-full">
-                <Percent className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Get it for ₹{product.flatOfferPrice} with coupon code FLAT20</span>
-              </div>
-
-              {/* Payment Methods */}
-              <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
+              {/* Secure Payment (Matches Image 1) */}
+              <div className="mt-3.5 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
                 <span className="font-semibold text-zinc-700">Secure Payment</span>
                 <div className="flex items-center gap-1.5 font-bold text-[10px] text-zinc-600">
-                  <span className="px-2 py-0.5 bg-zinc-100 rounded border border-zinc-200">UPI</span>
-                  <span className="px-2 py-0.5 bg-zinc-100 rounded border border-zinc-200">RuPay</span>
-                  <span className="px-2 py-0.5 bg-zinc-100 rounded border border-zinc-200">Mastercard</span>
-                  <span className="px-2 py-0.5 bg-zinc-100 rounded border border-zinc-200">VISA</span>
+                  <span className="px-1.5 py-0.5 bg-zinc-100 rounded border border-zinc-200">UPI</span>
+                  <span className="px-1.5 py-0.5 bg-zinc-100 rounded border border-zinc-200">RuPay</span>
+                  <span className="px-1.5 py-0.5 bg-zinc-100 rounded border border-zinc-200">Mastercard</span>
+                  <span className="px-1.5 py-0.5 bg-zinc-100 rounded border border-zinc-200">VISA</span>
+                  <span className="px-1.5 py-0.5 bg-zinc-100 rounded border border-zinc-200">Net Banking</span>
                 </div>
               </div>
             </div>
 
-            {/* Select Variant */}
+            {/* Select Variant (Horizontal Scroll - Matches Image 1) */}
             <div>
-              <h3 className="text-xs font-bold text-zinc-900 mb-2.5">Select Variant</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <h3 className="text-xs font-bold text-zinc-900 mb-2">Select Variant</h3>
+              <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-2 pt-2 -mt-2">
                 {variants.map((v, i) => {
                   const isSelected = selectedVariant === i;
                   return (
                     <button
                       key={i}
                       onClick={() => setSelectedVariant(i)}
-                      className={`relative p-3 rounded-2xl text-left border transition-all flex flex-col justify-between ${
+                      className={`relative min-w-[155px] p-2.5 rounded-xl text-left border transition-all flex flex-col justify-between shrink-0 ${
                         isSelected
-                          ? "border-amber-600 bg-amber-50/50 shadow-2xs"
+                          ? "border-[#E53935] bg-white shadow-2xs"
                           : "border-zinc-200 bg-white hover:border-zinc-300"
                       }`}
                     >
                       {v.isPopular && (
-                        <span className="absolute -top-2 left-2 text-[9px] font-black uppercase tracking-wide bg-rose-600 text-white px-2 py-0.5 rounded shadow-2xs">
+                        <span className="absolute -top-2 left-2 text-[9px] font-black uppercase tracking-wide bg-[#E53935] text-white px-2 py-0.5 rounded-full shadow-2xs">
                           Most Popular
                         </span>
                       )}
@@ -342,10 +311,10 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                         </p>
                         <p className="text-[10px] text-zinc-400 mt-0.5">{v.unitPrice}</p>
                       </div>
-                      <div className="mt-2.5 flex items-baseline gap-1.5">
-                        <span className="font-extrabold text-sm text-zinc-900">₹{v.price}</span>
-                        <span className="text-[10px] text-zinc-400 line-through">₹{v.mrp}</span>
-                        <span className="text-[10px] font-bold text-emerald-600 ml-auto">
+                      <div className="mt-3 flex items-baseline justify-between gap-1">
+                        <span className="font-black text-sm text-zinc-900">₹{v.price}</span>
+                        <span className="text-[11px] text-zinc-400 line-through">₹{v.mrp}</span>
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">
                           {v.discount}
                         </span>
                       </div>
@@ -355,7 +324,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            {/* Pincode Check */}
+            {/* Delivery Pincode Check (Matches Image 1) */}
             <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/80">
               <form onSubmit={handleCheckPincode} className="flex items-center gap-2">
                 <Truck className="w-4 h-4 text-zinc-500 shrink-0" />
@@ -390,19 +359,10 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 </p>
               )}
             </div>
-
-            {/* Add to Cart Button */}
-            <button
-              onClick={handleAddAndOpenCart}
-              className="w-full py-3.5 px-6 rounded-2xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wider uppercase transition flex items-center justify-center gap-2 shadow-sm active:scale-98"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              <span>{inCart ? "Add Another & Go to Bag" : "Add to Cart"}</span>
-            </button>
           </div>
         </div>
 
-        {/* 2. KEY INGREDIENTS SECTION (Matches Innovist Screenshot 1) */}
+        {/* 3. KEY INGREDIENTS (Matches Innovist Screenshot 1) */}
         <section className="space-y-4">
           <h2 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
             Key Ingredients
@@ -412,7 +372,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             <div className="bg-white rounded-3xl p-5 border border-zinc-200/80 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
               <div>
                 <div className="w-full h-44 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
-                  {/* Decorative Citrus Slice Graphic */}
                   <div className="w-28 h-28 rounded-full border-4 border-amber-100/80 flex items-center justify-center bg-orange-400/90 shadow-md">
                     <div className="w-20 h-20 rounded-full border-2 border-amber-200/60 flex items-center justify-center text-3xl">
                       🍊
@@ -433,7 +392,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             <div className="bg-white rounded-3xl p-5 border border-zinc-200/80 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
               <div>
                 <div className="w-full h-44 rounded-2xl bg-gradient-to-br from-cyan-100 via-sky-200 to-blue-200 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
-                  {/* Crystal / Powder Graphic */}
                   <div className="w-28 h-28 rounded-full border-4 border-white/80 flex items-center justify-center bg-sky-300/80 shadow-md">
                     <div className="w-20 h-20 rounded-full border-2 border-white/60 flex items-center justify-center text-3xl">
                       ⚗️
@@ -454,7 +412,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             <div className="bg-white rounded-3xl p-5 border border-zinc-200/80 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
               <div>
                 <div className="w-full h-44 rounded-2xl bg-gradient-to-br from-indigo-100 via-blue-200 to-sky-300 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
-                  {/* Molecular Spheres Graphic */}
                   <div className="w-28 h-28 rounded-full border-4 border-white/80 flex items-center justify-center bg-blue-300/80 shadow-md">
                     <div className="w-20 h-20 rounded-full border-2 border-white/60 flex items-center justify-center text-3xl">
                       💧
@@ -475,7 +432,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             <div className="bg-white rounded-3xl p-5 border border-zinc-200/80 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
               <div>
                 <div className="w-full h-44 rounded-2xl bg-gradient-to-br from-emerald-100 via-teal-200 to-green-300 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
-                  {/* Droplets Graphic */}
                   <div className="w-28 h-28 rounded-full border-4 border-white/80 flex items-center justify-center bg-teal-300/80 shadow-md">
                     <div className="w-20 h-20 rounded-full border-2 border-white/60 flex items-center justify-center text-3xl">
                       🌿
@@ -494,13 +450,12 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </section>
 
-        {/* 3. HOW TO USE SECTION (Matches Innovist Screenshot 2) */}
+        {/* 4. HOW TO USE (Matches Innovist Screenshot 2) */}
         <section className="space-y-4">
           <h2 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
             How to Use
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Step 1 */}
             <div className="bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-2xs flex flex-col items-center text-center">
               <div className="w-full h-48 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
                 <div className="w-24 h-24 rounded-2xl bg-white/90 shadow-md flex items-center justify-center text-4xl">
@@ -515,7 +470,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               </p>
             </div>
 
-            {/* Step 2 */}
             <div className="bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-2xs flex flex-col items-center text-center">
               <div className="w-full h-48 rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
                 <div className="w-24 h-24 rounded-2xl bg-white/90 shadow-md flex items-center justify-center text-4xl">
@@ -530,7 +484,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               </p>
             </div>
 
-            {/* Step 3 */}
             <div className="bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-2xs flex flex-col items-center text-center">
               <div className="w-full h-48 rounded-2xl bg-gradient-to-br from-rose-100 to-amber-100 flex items-center justify-center overflow-hidden mb-4 relative shadow-inner">
                 <div className="w-24 h-24 rounded-2xl bg-white/90 shadow-md flex items-center justify-center text-4xl">
@@ -547,14 +500,13 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </section>
 
-        {/* 4. CUSTOMER REVIEWS SECTION (Matches Innovist Screenshot 3) */}
+        {/* 5. CUSTOMER REVIEWS (Matches Innovist Screenshot 3) */}
         <section className="space-y-6">
           <h2 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
             Customer Reviews
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Rating Breakdown Card */}
             <div className="lg:col-span-4 bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-2xs flex flex-col justify-between">
               <div>
                 <div className="flex items-baseline gap-3 mb-2">
@@ -564,7 +516,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   </div>
                 </div>
 
-                {/* Rating Bars */}
                 <div className="space-y-2 mt-4">
                   {[
                     { stars: 5, count: 506, pct: "92%" },
@@ -603,10 +554,8 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            {/* Platform Badges (Amazon, Flipkart, Myntra, Nykaa) */}
             <div className="lg:col-span-8 bg-white rounded-3xl p-6 border border-zinc-200/80 shadow-2xs flex flex-col justify-center">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {/* Amazon */}
                 <div className="flex flex-col items-center text-center p-4 rounded-2xl bg-zinc-50 border border-zinc-100 hover:border-zinc-300 transition">
                   <div className="w-16 h-16 rounded-full bg-white shadow-2xs border border-zinc-200 flex items-center justify-center font-black text-xl text-zinc-900 mb-2">
                     a
@@ -615,7 +564,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   <span className="text-[10px] text-zinc-400 mt-0.5">Amazon Verified</span>
                 </div>
 
-                {/* Flipkart */}
                 <div className="flex flex-col items-center text-center p-4 rounded-2xl bg-zinc-50 border border-zinc-100 hover:border-zinc-300 transition">
                   <div className="w-16 h-16 rounded-full bg-[#FFE11B] shadow-2xs border border-amber-300 flex items-center justify-center font-black text-xl text-blue-700 mb-2">
                     🛍️
@@ -624,7 +572,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   <span className="text-[10px] text-zinc-400 mt-0.5">Flipkart Rating</span>
                 </div>
 
-                {/* Myntra */}
                 <div className="flex flex-col items-center text-center p-4 rounded-2xl bg-zinc-50 border border-zinc-100 hover:border-zinc-300 transition">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 shadow-2xs text-white flex items-center justify-center font-black text-2xl mb-2">
                     M
@@ -633,7 +580,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   <span className="text-[10px] text-zinc-400 mt-0.5">Myntra Top Pick</span>
                 </div>
 
-                {/* Nykaa */}
                 <div className="flex flex-col items-center text-center p-4 rounded-2xl bg-zinc-50 border border-zinc-100 hover:border-zinc-300 transition">
                   <div className="w-16 h-16 rounded-full bg-[#FC2779] shadow-2xs text-white flex items-center justify-center font-black text-xs uppercase tracking-tighter mb-2">
                     NYKAA
@@ -645,7 +591,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             </div>
           </div>
 
-          {/* User Review Photo Gallery (Matches Screenshot 3) */}
+          {/* User Review Photo Gallery */}
           <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
               <div
@@ -663,7 +609,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             </div>
           </div>
 
-          {/* Real Reviews Cards (Matches Screenshot 3) */}
+          {/* Real Reviews Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white rounded-3xl p-5 border border-zinc-200/80 shadow-2xs flex flex-col justify-between">
               <div>
@@ -721,7 +667,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </section>
 
-        {/* 5. FREQUENTLY ASKED QUESTIONS (Matches Innovist Screenshot 4) */}
+        {/* 6. FREQUENTLY ASKED QUESTIONS (Matches Innovist Screenshot 4) */}
         <section className="space-y-4">
           <h2 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
             Frequently Asked Questions
@@ -776,31 +722,15 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
         </section>
       </main>
 
-      {/* 6. STICKY DESKTOP & MOBILE BOTTOM BAR (Matches Innovist Screenshot 4) */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-md border-t border-zinc-200 z-40 flex items-center justify-center shadow-lg">
-        <div className="w-full max-w-6xl flex items-center justify-between gap-4 px-3 sm:px-6">
-          {/* Left: Thumbnail & Title (Desktop & Mobile) */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 border border-amber-200/80 p-1 shrink-0 flex items-center justify-center">
-              <FaceCreamJar product={product} size="sm" />
-            </div>
-            <div className="min-w-0">
-              <h4 className="font-extrabold text-xs sm:text-sm text-zinc-950 truncate">
-                {product.name}
-              </h4>
-              <p className="text-[10px] sm:text-xs text-zinc-500 truncate">
-                {currentVariant.title} • ₹{currentVariant.price}
-              </p>
-            </div>
-          </div>
-
-          {/* Right: Signature Yellow Add to Cart Button */}
+      {/* 7. FULL-WIDTH STICKY YELLOW ADD TO CART BUTTON (Matches Image 1 Exactly) */}
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-50 shadow-lg">
+        <div className="w-full max-w-4xl mx-auto">
           <button
             onClick={handleAddAndOpenCart}
-            className="py-3 px-6 sm:px-12 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-xs sm:text-sm tracking-wider uppercase transition flex items-center justify-center gap-2 shadow-sm shrink-0 active:scale-98"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wide uppercase transition flex items-center justify-center gap-2 shadow-xs active:scale-98"
           >
-            <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>{inCart ? "In Bag (Add Another)" : "Add to Cart"}</span>
+            <ShoppingBag className="w-5 h-5" />
+            <span>{inCart ? "In Bag • Add Another" : "Add to Cart"}</span>
           </button>
         </div>
       </div>
@@ -810,7 +740,6 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <AuthModal />
       <Toast />
-      <MobileBottomNav onOpenSearch={() => setIsSearchOpen(true)} />
     </div>
   );
 }
