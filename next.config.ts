@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   env: {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+    RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || "rzp_test_Tq57o2d7vWhs1N",
+    NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || "rzp_test_Tq57o2d7vWhs1N",
   },
   cacheComponents: true,
   partialPrefetching: true,

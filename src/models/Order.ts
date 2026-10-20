@@ -18,6 +18,14 @@ export interface IOrder extends Document {
   couponCode?: string;
   shippingFee: number;
   totalAmount: number;
+  paymentMethod: "razorpay" | "cod";
+  shippingAddress?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+    phone?: string;
+  };
   status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   paymentId?: string;
   razorpayOrderId?: string;
@@ -44,6 +52,18 @@ const OrderSchema = new Schema<IOrder>(
     couponCode: { type: String },
     shippingFee: { type: Number, default: 0 },
     totalAmount: { type: Number, required: true },
+    paymentMethod: {
+      type: String,
+      enum: ["razorpay", "cod"],
+      default: "razorpay",
+    },
+    shippingAddress: {
+      street: String,
+      city: String,
+      state: String,
+      pincode: String,
+      phone: String,
+    },
     status: {
       type: String,
       enum: ["pending", "paid", "shipped", "delivered", "cancelled"],
