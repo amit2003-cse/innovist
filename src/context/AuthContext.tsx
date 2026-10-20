@@ -22,6 +22,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const GOOGLE_CLIENT_ID =
+  process.env.GOOGLE_CLIENT_ID ||
   process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
   "439593796565-5t183h1r9oaphtahj3bv2q2gn0t94iv9.apps.googleusercontent.com";
 

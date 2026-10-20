@@ -3,8 +3,14 @@ import { OAuth2Client } from "google-auth-library";
 import { connectToDatabase } from "@/lib/mongodb";
 import { User } from "@/models/User";
 
-const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(clientId);
+
+export async function GET() {
+  return NextResponse.json({
+    clientId: process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
+  });
+}
 
 export async function POST(req: NextRequest) {
   try {
