@@ -175,11 +175,11 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
             </button>
 
             {/* Brand Logo */}
-            <a href="#" className="flex items-center">
-              <span className="font-extrabold text-base sm:text-xl tracking-[0.18em] text-white uppercase">
+            <Link href="/" className="flex items-center">
+              <span className="font-extrabold text-base sm:text-xl tracking-[0.18em] text-white uppercase hover:text-amber-400 transition">
                 INNOVIST
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Center: Search Bar Trigger with Dynamic Typewriter Effect */}

@@ -9,7 +9,6 @@ import CartDrawer from "@/components/CartDrawer";
 import SearchModal from "@/components/SearchModal";
 import AuthModal from "@/components/AuthModal";
 import Toast from "@/components/Toast";
-import MobileBottomNav from "@/components/MobileBottomNav";
 import UserAvatar from "@/components/UserAvatar";
 import {
   Package,
@@ -98,7 +97,7 @@ export default function OrdersPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-amber-200 selection:text-amber-900 pb-20 md:pb-0">
+    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-amber-200 selection:text-amber-900 pb-8">
       {/* 1. Header with Rotating Top Banner */}
       <Header onOpenSearch={() => setIsSearchOpen(true)} />
 
@@ -226,25 +225,7 @@ export default function OrdersPage() {
         {/* Tab 1: Orders List (Matches Innovist Screenshot 4) */}
         {activeTab === "orders" && (
           <div className="space-y-3">
-            {!user ? (
-              <div className="bg-white rounded-3xl p-8 border border-zinc-200/90 text-center space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto text-xl">
-                  📦
-                </div>
-                <h3 className="text-sm font-bold text-zinc-900">Sign in to view your orders</h3>
-                <p className="text-xs text-zinc-500 max-w-xs mx-auto">
-                  You need to be logged in with your Google account to track and view your order history.
-                </p>
-                <div className="pt-1">
-                  <button
-                    onClick={() => setIsAuthModalOpen(true)}
-                    className="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs transition shadow-xs"
-                  >
-                    Sign In with Google
-                  </button>
-                </div>
-              </div>
-            ) : orders.length === 0 ? (
+            {orders.length === 0 ? (
               <div className="bg-white rounded-3xl p-8 border border-zinc-200/90 text-center space-y-2">
                 <p className="text-zinc-600 font-semibold text-xs sm:text-sm">
                   You haven&apos;t placed any orders yet.
@@ -437,11 +418,6 @@ export default function OrdersPage() {
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <AuthModal />
       <Toast />
-      <MobileBottomNav
-        onOpenSearch={() => setIsSearchOpen(true)}
-        onScrollToTop={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        onScrollToCategories={() => {}}
-      />
     </div>
   );
 }
