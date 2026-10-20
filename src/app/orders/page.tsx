@@ -40,39 +40,21 @@ export default function OrdersPage() {
   React.useEffect(() => {
     async function fetchOrders() {
       if (!user?.email) {
-        // Show demo order for guest/preview
-        setOrders([
-          {
-            _id: "INV-942817",
-            createdAt: new Date().toISOString(),
-            status: "paid",
-            paymentMethod: "razorpay",
-            items: [{ name: "10% Vitamin C + Glucosamine Face Cream", size: "50 ml", price: 499, quantity: 1 }],
-            totalAmount: 499,
-          },
-        ]);
+        setOrders([]);
         return;
       }
       setLoadingOrders(true);
       try {
         const res = await fetch(`/api/orders?email=${encodeURIComponent(user.email)}`);
         const data = await res.json();
-        if (data.orders && data.orders.length > 0) {
+        if (data.orders && Array.isArray(data.orders)) {
           setOrders(data.orders);
         } else {
-          setOrders([
-            {
-              _id: "INV-942817",
-              createdAt: new Date().toISOString(),
-              status: "paid",
-              paymentMethod: "razorpay",
-              items: [{ name: "10% Vitamin C + Glucosamine Face Cream", size: "50 ml", price: 499, quantity: 1 }],
-              totalAmount: 499,
-            },
-          ]);
+          setOrders([]);
         }
       } catch (e) {
-        console.error(e);
+        console.error("Failed to fetch orders:", e);
+        setOrders([]);
       } finally {
         setLoadingOrders(false);
       }
@@ -244,7 +226,25 @@ export default function OrdersPage() {
         {/* Tab 1: Orders List (Matches Innovist Screenshot 4) */}
         {activeTab === "orders" && (
           <div className="space-y-3">
-            {orders.length === 0 ? (
+            {!user ? (
+              <div className="bg-white rounded-3xl p-8 border border-zinc-200/90 text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto text-xl">
+                  📦
+                </div>
+                <h3 className="text-sm font-bold text-zinc-900">Sign in to view your orders</h3>
+                <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+                  You need to be logged in with your Google account to track and view your order history.
+                </p>
+                <div className="pt-1">
+                  <button
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white font-bold text-xs transition shadow-xs"
+                  >
+                    Sign In with Google
+                  </button>
+                </div>
+              </div>
+            ) : orders.length === 0 ? (
               <div className="bg-white rounded-3xl p-8 border border-zinc-200/90 text-center space-y-2">
                 <p className="text-zinc-600 font-semibold text-xs sm:text-sm">
                   You haven&apos;t placed any orders yet.
