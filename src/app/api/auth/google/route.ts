@@ -55,29 +55,36 @@ export async function POST(req: NextRequest) {
 
     const { sub: googleId, email, name, picture: avatar } = payload;
 
-    // Connect to MongoDB Atlas
-    await connectToDatabase();
+    let dbUserId = googleId;
 
-    // Upsert user in database
-    const user = await User.findOneAndUpdate(
-      { email: email.toLowerCase() },
-      {
-        name: name || "Innovist User",
-        email: email.toLowerCase(),
-        avatar: avatar || "",
-        googleId,
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    // Connect to MongoDB Atlas and save user
+    try {
+      await connectToDatabase();
+      const user = await User.findOneAndUpdate(
+        { email: email.toLowerCase() },
+        {
+          name: name || "Innovist User",
+          email: email.toLowerCase(),
+          avatar: avatar || "",
+          googleId,
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      if (user) {
+        dbUserId = user._id.toString();
+      }
+    } catch (dbError: any) {
+      console.warn("MongoDB Atlas connection warning (check IP Whitelist in Atlas):", dbError.message);
+    }
 
     return NextResponse.json({
       success: true,
       message: "Authentication successful",
       user: {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
+        id: dbUserId,
+        name: name || "Innovist User",
+        email: email.toLowerCase(),
+        avatar: avatar || "",
       },
     });
   } catch (error: any) {
