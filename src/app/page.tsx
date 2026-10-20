@@ -136,6 +136,8 @@ export default function Home() {
       <ProductDetailModal
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
+        onSelectProduct={(p) => setQuickViewProduct(p)}
+        allProducts={displayedFilteredCreams.length > 0 ? displayedFilteredCreams : FACE_CREAMS}
       />
 
       {/* 13. Google Authentication Modal */}

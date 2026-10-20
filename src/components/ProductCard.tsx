@@ -18,7 +18,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
   const inCart = !!cartItem;
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group w-full">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group w-full h-full">
       {/* Upper Area: Visual & Badges */}
       <div>
         <div
