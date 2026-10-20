@@ -13,6 +13,7 @@ import FooterAccordion from "@/components/FooterAccordion";
 import CartDrawer from "@/components/CartDrawer";
 import SearchModal from "@/components/SearchModal";
 import ProductDetailModal from "@/components/ProductDetailModal";
+import AuthModal from "@/components/AuthModal";
 import Toast from "@/components/Toast";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
@@ -118,7 +119,7 @@ export default function Home() {
       {/* 8. Skincare Journal Section */}
       <JournalSection />
 
-      {/* 9. App Download & Comprehensive Accordion Footer */}
+      {/* 9. Comprehensive Accordion Footer */}
       <FooterAccordion />
 
       {/* 10. Interactive Slide-Over Cart Drawer */}
@@ -137,10 +138,13 @@ export default function Home() {
         onClose={() => setQuickViewProduct(null)}
       />
 
-      {/* 13. Toast Notification Pill */}
+      {/* 13. Google Authentication Modal */}
+      <AuthModal />
+
+      {/* 14. Toast Notification Pill */}
       <Toast />
 
-      {/* 14. Mobile Bottom App Navigation */}
+      {/* 15. Mobile Bottom App Navigation */}
       <MobileBottomNav
         onOpenSearch={() => setIsSearchOpen(true)}
         onScrollToTop={scrollToTop}

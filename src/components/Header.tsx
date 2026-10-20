@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   Menu,
   X,
@@ -11,6 +12,8 @@ import {
   Sparkles,
   ShieldCheck,
   ChevronRight,
+  LogOut,
+  Package,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -20,10 +23,11 @@ interface HeaderProps {
 
 export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) {
   const { totalItemsCount, setIsCartOpen } = useCart();
+  const { user, logout, setIsAuthModalOpen } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
-  // 1. Top Announcement Bar - changes every 3 seconds (No app reference)
+  // 1. Top Announcement Bar - changes every 3 seconds (Website Only)
   const announcements = [
     {
       id: "offer-35",
@@ -57,7 +61,7 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
         setAnnouncementIndex((prev) => (prev + 1) % announcements.length);
         setIsFading(false);
       }, 300);
-    }, 3000); // 3 seconds interval
+    }, 3000);
 
     return () => clearInterval(timer);
   }, [announcements.length]);
@@ -118,7 +122,7 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#111827] text-white shadow-md">
-      {/* 1. Top Notice Announcement Bar - Auto Rotates every 3 seconds (Website Only) */}
+      {/* 1. Top Notice Announcement Bar */}
       <div className="bg-[#FFF4E5] border-b border-[#FEE2C3] px-2 py-1.5 text-center text-[11px] sm:text-xs font-semibold text-[#8C3A00] flex items-center justify-center gap-1.5 w-full h-8 overflow-hidden select-none">
         <div
           className={`flex items-center justify-center gap-1.5 truncate transition-all duration-300 transform ${
@@ -176,39 +180,87 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
               <button
                 onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                 aria-label="Account options"
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900/60 text-zinc-300 hover:text-white transition flex items-center justify-center text-xs"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900/60 text-zinc-300 hover:text-white transition flex items-center justify-center text-xs overflow-hidden"
               >
-                <User className="w-4 h-4" />
+                {user ? (
+                  user.avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-full h-full object-cover rounded-xl"
+                    />
+                  ) : (
+                    <span className="font-bold text-amber-400 text-xs">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  )
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
               </button>
 
               {/* Account Dropdown */}
               {accountMenuOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white text-zinc-900 rounded-2xl shadow-xl border border-zinc-100 p-4 z-50 text-xs">
-                  <div className="pb-3 border-b border-zinc-100 mb-3">
-                    <p className="font-bold text-sm text-zinc-900">Innovist Derma</p>
-                    <p className="text-zinc-500 text-[11px] mt-0.5">
-                      Sign in for orders, rewards & tracking
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      alert("Google Authentication & Login will be connected with MongoDB in next step!");
-                      setAccountMenuOpen(false);
-                    }}
-                    className="w-full py-2 px-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition text-center mb-2 flex items-center justify-center gap-2"
-                  >
-                    <span>Sign In with Google</span>
-                  </button>
-                  <div className="space-y-1.5 text-zinc-600 pt-1">
-                    <div className="py-1 px-2 rounded-lg hover:bg-zinc-50 cursor-pointer flex items-center justify-between">
-                      <span>My Face Cream Orders</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
-                    </div>
-                    <div className="py-1 px-2 rounded-lg hover:bg-zinc-50 cursor-pointer flex items-center justify-between">
-                      <span>Dermatologist Advice</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
-                    </div>
-                  </div>
+                  {user ? (
+                    <>
+                      <div className="pb-3 border-b border-zinc-100 mb-3 flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden">
+                          {user.avatar ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            user.name.charAt(0)
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-xs text-zinc-900 truncate">{user.name}</p>
+                          <p className="text-zinc-500 text-[10px] truncate">{user.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5 text-zinc-700 pt-1">
+                        <div className="py-1.5 px-2 rounded-lg hover:bg-zinc-50 cursor-pointer flex items-center justify-between">
+                          <span className="flex items-center gap-2">
+                            <Package className="w-3.5 h-3.5 text-zinc-400" />
+                            My Orders
+                          </span>
+                          <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
+                        </div>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setAccountMenuOpen(false);
+                          }}
+                          className="w-full text-left py-1.5 px-2 rounded-lg hover:bg-rose-50 text-rose-600 flex items-center justify-between transition"
+                        >
+                          <span className="flex items-center gap-2">
+                            <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                            Sign Out
+                          </span>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="pb-3 border-b border-zinc-100 mb-3">
+                        <p className="font-bold text-sm text-zinc-900">Welcome to Innovist</p>
+                        <p className="text-zinc-500 text-[11px] mt-0.5">
+                          Sign in with Google to save orders & routines
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          setIsAuthModalOpen(true);
+                        }}
+                        className="w-full py-2.5 px-3 bg-zinc-900 text-white rounded-xl font-bold hover:bg-zinc-800 transition text-center mb-2 flex items-center justify-center gap-2 shadow-xs"
+                      >
+                        <span>Sign In with Google</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -291,19 +343,34 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
                   <Sparkles className="w-3.5 h-3.5 text-amber-600" /> FLAT 20% OFF
                 </p>
                 <p className="text-[11px] text-amber-800 mt-0.5">
-                  Use code <strong>FLAT20</strong> during bag checkout.
+                  Use code <strong>FLAT20</strong> during checkout.
                 </p>
               </div>
 
-              <button
-                onClick={() => {
-                  alert("Google Login will be configured in backend phase.");
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full py-2.5 bg-zinc-900 text-white rounded-xl text-xs font-semibold"
-              >
-                Sign In / Register
-              </button>
+              {user ? (
+                <div className="p-2.5 bg-zinc-100 rounded-xl flex items-center justify-between">
+                  <span className="font-bold text-xs text-zinc-800 truncate">{user.name}</span>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="text-xs font-bold text-rose-600"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="w-full py-2.5 bg-zinc-900 text-white rounded-xl text-xs font-semibold"
+                >
+                  Sign In with Google
+                </button>
+              )}
             </div>
           </div>
         </div>

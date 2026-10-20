@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { Home, Grid, Search, ShoppingBag, User } from "lucide-react";
 
 interface MobileBottomNavProps {
@@ -16,6 +17,7 @@ export default function MobileBottomNav({
   onScrollToCategories,
 }: MobileBottomNavProps) {
   const { totalItemsCount, setIsCartOpen } = useCart();
+  const { user, setIsAuthModalOpen } = useAuth();
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-zinc-200 px-4 py-2 flex items-center justify-around md:hidden shadow-lg">
@@ -59,11 +61,19 @@ export default function MobileBottomNav({
       </button>
 
       <button
-        onClick={() => alert("Google Auth and User Profile will be connected in backend phase.")}
-        className="flex flex-col items-center gap-0.5 text-zinc-500 hover:text-amber-600 transition"
+        onClick={() => setIsAuthModalOpen(true)}
+        className="flex flex-col items-center gap-0.5 text-zinc-800 hover:text-amber-600 transition"
       >
-        <User className="w-5 h-5" />
-        <span className="text-[10px] font-medium">Account</span>
+        {user ? (
+          <div className="w-5 h-5 rounded-full bg-amber-400 text-zinc-950 flex items-center justify-center font-bold text-[10px]">
+            {user.name.charAt(0)}
+          </div>
+        ) : (
+          <User className="w-5 h-5" />
+        )}
+        <span className="text-[10px] font-medium truncate max-w-[50px]">
+          {user ? user.name.split(" ")[0] : "Account"}
+        </span>
       </button>
     </div>
   );
