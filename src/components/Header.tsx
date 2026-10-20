@@ -14,8 +14,21 @@ import {
   Sparkles,
   ShieldCheck,
   ChevronRight,
+  ChevronDown,
   LogOut,
   Package,
+  Truck,
+  Crown,
+  Zap,
+  Sun,
+  AlertCircle,
+  Leaf,
+  Wallet,
+  Share2,
+  Briefcase,
+  BookOpen,
+  Phone,
+  ExternalLink,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -28,6 +41,14 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
   const { user, logout, setIsAuthModalOpen } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<{ [key: string]: boolean }>({});
+
+  const toggleSubmenu = (key: string) => {
+    setExpandedMenus((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   // 1. Top Announcement Bar - changes every 3 seconds (Website Only)
   const announcements = [
@@ -286,81 +307,356 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
         </div>
       </div>
 
-      {/* Mobile Slide-Over Menu */}
+      {/* Mobile Slide-Over Menu (Exact Innovist Layout) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 flex lg:hidden">
+        <div className="fixed inset-0 z-[100] flex lg:hidden">
+          {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="relative w-4/5 max-w-xs bg-white text-zinc-900 h-full shadow-2xl flex flex-col z-10 p-5 overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
-              <span className="font-extrabold text-lg tracking-[0.2em] text-zinc-900">
-                INNOVIST
-              </span>
+
+          {/* Drawer Body */}
+          <div className="relative w-[84vw] max-w-[340px] bg-white text-zinc-900 h-full shadow-2xl flex flex-col z-10 overflow-hidden">
+            {/* 1. Dark User Header (Matches Screenshot Exactly) */}
+            <div className="bg-[#191919] text-white px-4 py-4 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name || "User"}
+                    referrerPolicy="no-referrer"
+                    className="w-11 h-11 rounded-xl object-cover bg-white shrink-0"
+                  />
+                ) : (
+                  <div className="w-11 h-11 rounded-xl bg-white text-zinc-900 font-extrabold text-xl flex items-center justify-center shadow-xs shrink-0">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-white leading-tight">Hi,</p>
+                  <p className="text-xs text-zinc-300 font-medium truncate max-w-[170px]">
+                    {user ? (user.email || user.name || "+919110904529") : "+919110904529"}
+                  </p>
+                  {user ? (
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="text-xs text-amber-400 font-bold hover:underline block mt-0.5 text-left"
+                    >
+                      Log out
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="text-xs text-amber-400 font-bold hover:underline block mt-0.5 text-left"
+                    >
+                      Log in / Register
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-lg text-zinc-500 hover:text-black hover:bg-zinc-100"
+                className="p-1.5 text-zinc-300 hover:text-white transition rounded-lg"
+                aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="py-4">
-              <p className="text-[11px] font-bold tracking-wider text-zinc-400 uppercase mb-3">
-                Face Cream Categories
-              </p>
-              <div className="space-y-1">
-                {menuCategories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      if (onSelectCategory) onSelectCategory(cat.id);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 text-zinc-800 text-xs font-semibold transition text-left"
-                  >
-                    <span className="text-base">{cat.icon}</span>
-                    <span>{cat.name}</span>
-                  </button>
-                ))}
+            {/* 2. Menu Navigation List (Scrollable) */}
+            <div className="flex-1 overflow-y-auto divide-y divide-zinc-100 text-[13px] font-semibold text-zinc-800">
+              {/* Track Order */}
+              <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Truck className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Track Order</span>
+              </Link>
+
+              {/* Best Sellers */}
+              <Link
+                href="/#bestsellers"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Crown className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Best Sellers</span>
+              </Link>
+
+              {/* New Launches */}
+              <Link
+                href="/#self-care"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Zap className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>New Launches</span>
+              </Link>
+
+              {/* Hair Care (Accordion) */}
+              <div>
+                <button
+                  onClick={() => toggleSubmenu("hairCare")}
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50 transition text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-[18px] h-[18px] text-zinc-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z" />
+                      <path d="M7 10c0 4.5 2 7 5 7s5-2.5 5-7" />
+                      <path d="M6 14c-1.5 2-2 4-2 7h16c0-3-.5-5-2-7" />
+                    </svg>
+                    <span>Hair Care</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+                      expandedMenus["hairCare"] ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {expandedMenus["hairCare"] && (
+                  <div className="bg-zinc-50/80 px-10 py-2 space-y-2 text-xs font-medium text-zinc-600 border-t border-zinc-100">
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">All Hair Care</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Shampoos & Cleansers</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Conditioners</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Hair Masks & Serums</Link>
+                  </div>
+                )}
               </div>
+
+              {/* Skin Care (Accordion) */}
+              <div>
+                <button
+                  onClick={() => toggleSubmenu("skinCare")}
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50 transition text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-[18px] h-[18px] text-zinc-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="13" r="8" />
+                      <path d="M5 9c2-2 5-3 7-3s5 1 7 3" />
+                      <circle cx="9" cy="13" r="1" fill="currentColor" />
+                      <circle cx="15" cy="13" r="1" fill="currentColor" />
+                      <path d="M10 17c.5.5 1.5 1 2 1s1.5-.5 2-1" />
+                    </svg>
+                    <span>Skin Care</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+                      expandedMenus["skinCare"] ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {expandedMenus["skinCare"] && (
+                  <div className="bg-zinc-50/80 px-10 py-2 space-y-2 text-xs font-medium text-zinc-600 border-t border-zinc-100">
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Moisturizers & Face Creams</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Vitamin C Brightening Serums</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Ceramide Barrier Care</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Night Repair & Retinol</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Cleansers & Toners</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Sun Care (Accordion) */}
+              <div>
+                <button
+                  onClick={() => toggleSubmenu("sunCare")}
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50 transition text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <Sun className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                    <span>Sun Care</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+                      expandedMenus["sunCare"] ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {expandedMenus["sunCare"] && (
+                  <div className="bg-zinc-50/80 px-10 py-2 space-y-2 text-xs font-medium text-zinc-600 border-t border-zinc-100">
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Mineral Sunscreen SPF 50</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Dewy Sunscreen Gel</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Ultra Matte Finish Sunscreen</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Health & Wellness */}
+              <Link
+                href="/#wellness"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Zap className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Health & Wellness</span>
+              </Link>
+
+              {/* Concerns (Accordion) */}
+              <div>
+                <button
+                  onClick={() => toggleSubmenu("concerns")}
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50 transition text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                    <span>Concerns</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+                      expandedMenus["concerns"] ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {expandedMenus["concerns"] && (
+                  <div className="bg-zinc-50/80 px-10 py-2 space-y-2 text-xs font-medium text-zinc-600 border-t border-zinc-100">
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Dry & Damaged Barrier</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Dullness & Dark Spots</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Acne & Blemishes</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Fine Lines & Aging</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Ingredients (Accordion) */}
+              <div>
+                <button
+                  onClick={() => toggleSubmenu("ingredients")}
+                  className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-zinc-50 transition text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <svg className="w-[18px] h-[18px] text-zinc-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22v-8" />
+                      <path d="M12 14a5 5 0 0 1 5-5c2 0 3 1 3 1s0 3-2 5a5 5 0 0 1-6-1z" />
+                      <path d="M12 17a4 4 0 0 0-4-4c-1.5 0-2.5.8-2.5.8s0 2.2 1.5 3.7A4 4 0 0 0 12 17z" />
+                    </svg>
+                    <span>Ingredients</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${
+                      expandedMenus["ingredients"] ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {expandedMenus["ingredients"] && (
+                  <div className="bg-zinc-50/80 px-10 py-2 space-y-2 text-xs font-medium text-zinc-600 border-t border-zinc-100">
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Vitamin C</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Ceramides</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Hyaluronic Acid</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Salicylic Acid</Link>
+                    <Link href="/#bestsellers" onClick={() => setMobileMenuOpen(false)} className="block py-1 hover:text-amber-600">Retinol & Peptides</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* My Account */}
+              <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <User className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>My Account</span>
+              </Link>
+
+              {/* iCash */}
+              <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Wallet className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>iCash</span>
+              </Link>
+
+              {/* Referrals */}
+              <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Share2 className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Referrals</span>
+              </Link>
+
+              {/* Careers */}
+              <Link
+                href="/#careers"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Briefcase className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Careers</span>
+              </Link>
+
+              {/* Blog */}
+              <Link
+                href="/#blog"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <BookOpen className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Blog</span>
+              </Link>
+
+              {/* Contact us */}
+              <Link
+                href="/#contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <Phone className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Contact us</span>
+              </Link>
+
+              {/* Innovist Insider */}
+              <Link
+                href="/orders"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3.5 hover:bg-zinc-50 transition"
+              >
+                <ExternalLink className="w-[18px] h-[18px] text-zinc-800" strokeWidth={1.75} />
+                <span>Innovist Insider</span>
+              </Link>
             </div>
 
-            <div className="mt-auto pt-4 border-t border-zinc-100 space-y-3">
-              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900">
-                <p className="font-bold flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600" /> FLAT 20% OFF
-                </p>
-                <p className="text-[11px] text-amber-800 mt-0.5">
-                  Use code <strong>FLAT20</strong> during checkout.
-                </p>
-              </div>
-
-              {user ? (
-                <div className="p-2.5 bg-zinc-100 rounded-xl flex items-center justify-between">
-                  <span className="font-bold text-xs text-zinc-800 truncate">{user.name}</span>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="text-xs font-bold text-rose-600"
-                  >
-                    Sign Out
-                  </button>
+            {/* 3. Bottom Banner (Matches Image 1) */}
+            <div className="bg-[#EFECE6] p-4 text-center shrink-0 border-t border-zinc-200/60">
+              <p className="font-extrabold text-xs text-zinc-900 tracking-tight">
+                Exclusive Deals | More Savings
+              </p>
+              <p className="text-[10px] text-zinc-500 mt-0.5 mb-2.5">
+                Download the Innovist App
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <div className="bg-black text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 text-[9px] font-bold shadow-xs">
+                  <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
+                    <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.3 0 .58.09.82.25l13.5 8.5c.62.39.81 1.21.42 1.83-.11.18-.26.33-.42.42l-13.5 8.5c-.24.16-.52.25-.82.25-.83 0-1.5-.67-1.5-1.5z" />
+                  </svg>
+                  <div className="text-left leading-none">
+                    <div className="text-[7px] text-zinc-400 uppercase">Get It On</div>
+                    <div>Google Play</div>
+                  </div>
                 </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setIsAuthModalOpen(true);
-                  }}
-                  className="w-full py-2.5 bg-zinc-900 text-white rounded-xl text-xs font-semibold"
-                >
-                  Sign In with Google
-                </button>
-              )}
+                <div className="bg-black text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 text-[9px] font-bold shadow-xs">
+                  <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.89c.62-.75 1.04-1.8 1.04-2.89 0-.15-.02-.3-.04-.44-.99.04-2.18.66-2.89 1.49-.62.71-1.16 1.76-1.16 2.87 0 .15.02.3.04.41 1.07-.03 2.19-.69 3.01-1.44z" />
+                  </svg>
+                  <div className="text-left leading-none">
+                    <div className="text-[7px] text-zinc-400 uppercase">Download on the</div>
+                    <div>App Store</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

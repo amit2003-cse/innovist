@@ -723,7 +723,7 @@ function ProductDetailContent() {
       </main>
 
       {/* 7. FULL-WIDTH STICKY YELLOW ADD TO CART BUTTON (Matches Image 1 Exactly) */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-50 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-30 shadow-lg">
         <div className="w-full max-w-4xl mx-auto">
           <button
             onClick={handleAddAndOpenCart}

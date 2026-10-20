@@ -9,7 +9,7 @@ import { Search, X, Star, ShoppingCart, Sparkles, ArrowRight } from "lucide-reac
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onQuickView: (product: FaceCream) => void;
+  onQuickView?: (product: FaceCream) => void;
 }
 
 export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModalProps) {
@@ -110,7 +110,11 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
                 {/* Product thumbnail */}
                 <div
                   onClick={() => {
-                    onQuickView(p);
+                    if (onQuickView) {
+                      onQuickView(p);
+                    } else {
+                      window.location.href = `/products/${p.id}`;
+                    }
                     onClose();
                   }}
                   className={`w-14 h-14 rounded-xl bg-gradient-to-b ${p.accentColor} flex items-center justify-center shrink-0 cursor-pointer`}
@@ -121,7 +125,11 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
                 {/* Details */}
                 <div
                   onClick={() => {
-                    onQuickView(p);
+                    if (onQuickView) {
+                      onQuickView(p);
+                    } else {
+                      window.location.href = `/products/${p.id}`;
+                    }
                     onClose();
                   }}
                   className="flex-1 min-w-0 cursor-pointer"
