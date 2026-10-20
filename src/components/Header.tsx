@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import UserAvatar from "@/components/UserAvatar";
 import {
   Menu,
   X,
@@ -183,18 +184,7 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900/60 text-zinc-300 hover:text-white transition flex items-center justify-center text-xs overflow-hidden"
               >
                 {user ? (
-                  user.avatar ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-                  ) : (
-                    <span className="font-bold text-amber-400 text-xs">
-                      {user.name.charAt(0).toUpperCase()}
-                    </span>
-                  )
+                  <UserAvatar user={user} className="w-full h-full rounded-xl" />
                 ) : (
                   <User className="w-4 h-4" />
                 )}
@@ -207,12 +197,7 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
                     <>
                       <div className="pb-3 border-b border-zinc-100 mb-3 flex items-center gap-2.5">
                         <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden">
-                          {user.avatar ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                          ) : (
-                            user.name.charAt(0)
-                          )}
+                          <UserAvatar user={user} className="w-full h-full rounded-full" />
                         </div>
                         <div className="min-w-0">
                           <p className="font-bold text-xs text-zinc-900 truncate">{user.name}</p>

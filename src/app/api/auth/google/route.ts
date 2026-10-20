@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
           avatar: avatar || "",
           googleId,
         },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
       );
       if (user) {
         dbUserId = user._id.toString();
