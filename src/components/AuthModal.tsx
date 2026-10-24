@@ -25,7 +25,7 @@ export default function AuthModal() {
     isLoading
   } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<"phone" | "google">("phone");
+  const [activeTab, setActiveTab] = useState<"google" | "phone">("google");
   const [identifier, setIdentifier] = useState("");
   const [name, setName] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -65,7 +65,7 @@ export default function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs animate-fade-in">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs animate-fade-in">
       <div className="bg-white rounded-3xl max-w-[420px] w-full shadow-2xl relative border border-zinc-200 overflow-hidden text-center animate-scale-up">
         {/* Close Button */}
         <button

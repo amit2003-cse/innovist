@@ -37,7 +37,7 @@ import {
 
 export default function CartDrawer() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, setIsAuthModalOpen } = useAuth();
   const {
     items,
     addToCart,
@@ -70,6 +70,14 @@ export default function CartDrawer() {
       setCheckoutStep("bag");
     }
   }, [items.length]);
+
+  // When user signs in with Google, advance to shipping if in bag and autofill
+  useEffect(() => {
+    if (user) {
+      if (user.name) setFullName(user.name);
+      if (user.email) setEmail(user.email);
+    }
+  }, [user]);
 
   // 15-Minute Persistent Cart Reservation Timer (CRO Feature 1)
   const [cartSecondsLeft, setCartSecondsLeft] = useState(15 * 60);
@@ -324,6 +332,12 @@ export default function CartDrawer() {
   // Main Checkout Handler
   const handleCheckout = async () => {
     if (items.length === 0) return;
+
+    if (!user) {
+      showToast("🔒 Please sign in with Google to complete your order.");
+      setIsAuthModalOpen(true);
+      return;
+    }
 
     if (!validateAddress()) {
       setShowAddressForm(true);
@@ -903,9 +917,38 @@ export default function CartDrawer() {
                     </div>
                   </div>
 
+                  {!user && (
+                    <div className="flex items-center gap-2 p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-950 text-[11px] font-medium">
+                      <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                        <path
+                          fill="#EA4335"
+                          d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.5 1.9 7.1l3.7 2.9C6.5 6.9 9 5 12 5z"
+                        />
+                        <path
+                          fill="#4285F4"
+                          d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.4 0 15.3c0 2.8.7 5.5 1.9 7.9l3.7-2.9z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-1.9-6.4-4.6L1.9 17.1C3.7 20.9 7.5 23.5 12 23.5z"
+                        />
+                      </svg>
+                      <span>Google login required to proceed & earn 500 iCash</span>
+                    </div>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => {
+                      if (!user) {
+                        showToast("🔒 Google authentication required to proceed to checkout");
+                        setIsAuthModalOpen(true);
+                        return;
+                      }
                       setErrorMessage(null);
                       setCheckoutStep("shipping");
                     }}
@@ -916,8 +959,17 @@ export default function CartDrawer() {
                       <span className="text-sm font-black">₹{total}</span>
                     </div>
                     <div className="flex items-center gap-1.5 font-bold text-xs">
-                      <span>Proceed to Checkout</span>
-                      <ArrowRight className="w-4 h-4" />
+                      {user ? (
+                        <>
+                          <span>Proceed to Checkout</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Login with Google to Checkout</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
                     </div>
                   </button>
 
