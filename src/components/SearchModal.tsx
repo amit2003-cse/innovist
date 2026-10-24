@@ -27,7 +27,7 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
 
   if (!isOpen) return null;
 
-  const quickPills = ["Ceramides", "Vitamin C", "Dry Barrier", "SPF 50", "Salicylic", "Night Repair"];
+  const quickPills = ["Face Wash", "Face Cream", "Ceramides", "Vitamin C", "Salicylic", "Retinol"];
 
   const filteredProducts = query.trim()
     ? FACE_CREAMS.filter((p) => {
@@ -36,6 +36,7 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
           p.name.toLowerCase().includes(q) ||
           p.subtitle.toLowerCase().includes(q) ||
           p.concern.toLowerCase().includes(q) ||
+          (p.category && (p.category.toLowerCase().includes(q) || p.category.replace("-", " ").includes(q))) ||
           p.keyIngredients.some((ing) => ing.toLowerCase().includes(q))
         );
       })
