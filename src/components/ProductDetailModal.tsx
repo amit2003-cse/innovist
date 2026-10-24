@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { FaceCream } from "@/data/faceCreams";
 import { useCart } from "@/context/CartContext";
@@ -13,19 +13,10 @@ import {
   ChevronRight,
   ShieldCheck,
   Droplet,
-  Sun,
-  Moon,
-  Sparkles,
   Percent,
   Check,
   CheckCircle2,
-  MapPin,
   Truck,
-  Leaf,
-  HeartHandshake,
-  Award,
-  FlaskConical,
-  Zap,
   ShoppingBag
 } from "lucide-react";
 
@@ -59,13 +50,6 @@ export default function ProductDetailModal({
 
   // Subtab: "love" | "suitable"
   const [benefitSubTab, setBenefitSubTab] = useState<"love" | "suitable">("love");
-
-  // Reset internal states when product changes
-  useEffect(() => {
-    setActiveSlide(0);
-    setSelectedVariant(0);
-    setPincodeStatus("idle");
-  }, [product?.id]);
 
   if (!product) return null;
 

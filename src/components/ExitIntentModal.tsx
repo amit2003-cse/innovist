@@ -5,26 +5,17 @@ import { useCart } from "@/context/CartContext";
 import FaceCreamJar from "./FaceCreamJar";
 import {
   X,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
-  Percent,
   Clock,
   Gift
 } from "lucide-react";
 
 export default function ExitIntentModal() {
-  const { items, applyCoupon, setIsCartOpen, total, subtotal } = useCart();
+  const { items, applyCoupon, setIsCartOpen, total } = useCart();
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
     const handleMouseLeave = (e: MouseEvent) => {
       // Trigger when cursor approaches top edge to close tab
       if (e.clientY <= 15) {
@@ -42,7 +33,7 @@ export default function ExitIntentModal() {
 
     document.addEventListener("mouseleave", handleMouseLeave);
     return () => document.removeEventListener("mouseleave", handleMouseLeave);
-  }, [mounted, items.length]);
+  }, [items.length]);
 
   if (!isOpen || items.length === 0) return null;
 

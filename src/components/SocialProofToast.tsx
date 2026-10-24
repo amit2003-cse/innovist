@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { FACE_CREAMS } from "@/data/faceCreams";
 import FaceCreamJar from "./FaceCreamJar";
-import { CheckCircle2, X, Sparkles, ShoppingBag } from "lucide-react";
+import { CheckCircle2, X } from "lucide-react";
 
 interface SocialPurchase {
   buyerName: string;
@@ -60,9 +60,8 @@ export default function SocialProofToast() {
   const isHoveredRef = useRef(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Initial delay before first toast appears
     const initialTimer = setTimeout(() => {
+      setMounted(true);
       setIsVisible(true);
     }, 3500);
 
@@ -103,7 +102,7 @@ export default function SocialProofToast() {
       onMouseLeave={() => {
         isHoveredRef.current = false;
       }}
-      className={`fixed bottom-20 sm:bottom-6 left-3 sm:left-6 z-40 max-w-[320px] sm:max-w-[340px] transition-all duration-500 transform ${
+      className={`fixed bottom-4 sm:bottom-6 left-3 sm:left-6 z-40 max-w-[320px] sm:max-w-[340px] transition-all duration-500 transform ${
         isVisible
           ? "opacity-100 translate-y-0 scale-100"
           : "opacity-0 translate-y-4 scale-95 pointer-events-none"

@@ -2,13 +2,22 @@
  * Razorpay Standard Web Checkout Loader & Helper
  */
 
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => {
+      open: () => void;
+      on: (event: string, callback: (response: unknown) => void) => void;
+    };
+  }
+}
+
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
     if (typeof window === "undefined") {
       resolve(false);
       return;
     }
-    if ((window as any).Razorpay) {
+    if (window.Razorpay) {
       resolve(true);
       return;
     }

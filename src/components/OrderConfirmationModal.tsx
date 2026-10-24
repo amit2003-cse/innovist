@@ -1,20 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Package,
   MapPin,
-  Clock,
   Truck,
   MessageSquare,
   Mail,
-  Smartphone,
-  ExternalLink,
   Printer,
   ArrowRight,
-  ShieldCheck,
   X,
   Sparkles
 } from "lucide-react";
@@ -58,7 +54,6 @@ export default function OrderConfirmationModal({
   order,
 }: OrderConfirmationModalProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"summary" | "timeline">("summary");
 
   if (!isOpen || !order) return null;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, Truck, RefreshCw, Award } from "lucide-react";
+import { ShieldCheck, Truck, RefreshCw } from "lucide-react";
 
 interface TrustBadgesProps {
   variant?: "full" | "compact" | "strip";

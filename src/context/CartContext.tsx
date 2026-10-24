@@ -45,7 +45,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem("innovist_cart");
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setTimeout(() => setItems(parsed), 0);
       }
     } catch (e) {
       console.error(e);

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
 import { useCart } from "@/context/CartContext";
 import FaceCreamJar from "./FaceCreamJar";
-import { Search, X, Star, ShoppingCart, Sparkles, ArrowRight } from "lucide-react";
+import { Search, X, ShoppingCart, Sparkles } from "lucide-react";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface SearchModalProps {
 }
 
 export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModalProps) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const { addToCart } = useCart();
@@ -20,10 +22,13 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setQuery("");
     }
   }, [isOpen]);
+
+  const handleClose = () => {
+    setQuery("");
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -114,9 +119,9 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
                     if (onQuickView) {
                       onQuickView(p);
                     } else {
-                      window.location.href = `/products/${p.id}`;
+                      router.push(`/products/${p.id}`);
                     }
-                    onClose();
+                    handleClose();
                   }}
                   className={`w-14 h-14 rounded-xl bg-gradient-to-b ${p.accentColor} flex items-center justify-center shrink-0 cursor-pointer`}
                 >
@@ -129,9 +134,9 @@ export default function SearchModal({ isOpen, onClose, onQuickView }: SearchModa
                     if (onQuickView) {
                       onQuickView(p);
                     } else {
-                      window.location.href = `/products/${p.id}`;
+                      router.push(`/products/${p.id}`);
                     }
-                    onClose();
+                    handleClose();
                   }}
                   className="flex-1 min-w-0 cursor-pointer"
                 >

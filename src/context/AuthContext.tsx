@@ -14,6 +14,7 @@ interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
   loginWithCredential: (credential: string) => Promise<boolean>;
+  loginWithPhoneOrEmail: (identifier: string, name?: string) => boolean;
   logout: () => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
@@ -35,13 +36,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const stored = localStorage.getItem("innovist_user");
       if (stored) {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setTimeout(() => {
+          setUser(parsed);
+          setIsLoading(false);
+        }, 0);
+        return;
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsLoading(false);
     }
+    setTimeout(() => setIsLoading(false), 0);
   }, []);
 
   const loginWithCredential = async (credential: string): Promise<boolean> => {
@@ -71,6 +76,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithPhoneOrEmail = (identifier: string, name?: string): boolean => {
+    const clean = identifier.trim();
+    if (!clean) return false;
+    const isEmail = clean.includes("@");
+    const newUser: AuthUser = {
+      id: `usr_${Date.now()}`,
+      name: name?.trim() || (isEmail ? clean.split("@")[0] : `Customer ${clean.slice(-4)}`),
+      email: isEmail ? clean : `${clean.replace(/\D/g, "")}@customer.innovist.com`,
+    };
+    setUser(newUser);
+    localStorage.setItem("innovist_user", JSON.stringify(newUser));
+    setIsAuthModalOpen(false);
+    return true;
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("innovist_user");
@@ -83,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           user,
           isLoading,
           loginWithCredential,
+          loginWithPhoneOrEmail,
           logout,
           isAuthModalOpen,
           setIsAuthModalOpen,

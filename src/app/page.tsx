@@ -15,7 +15,6 @@ import SearchModal from "@/components/SearchModal";
 import ProductDetailModal from "@/components/ProductDetailModal";
 import AuthModal from "@/components/AuthModal";
 import Toast from "@/components/Toast";
-import MobileBottomNav from "@/components/MobileBottomNav";
 import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
 
 export default function Home() {
@@ -44,16 +43,6 @@ export default function Home() {
     }
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const scrollToCategories = () => {
-    if (categoriesRef.current) {
-      categoriesRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const scrollToBestSellers = () => {
     if (bestSellersRef.current) {
       bestSellersRef.current.scrollIntoView({ behavior: "smooth" });
@@ -69,11 +58,12 @@ export default function Home() {
       : FACE_CREAMS.filter((p) => p.concern === selectedConcern);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-amber-200 selection:text-amber-900 pb-16 md:pb-0 w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#FAF9F6] selection:bg-amber-200 selection:text-amber-900 w-full max-w-full overflow-x-hidden">
       {/* 1. Header with Fraud Banner, Logo, Search Trigger, Cart */}
       <Header
         onOpenSearch={() => setIsSearchOpen(true)}
         onSelectCategory={handleCategorySelect}
+        onSelectConcern={handleConcernSelect}
       />
 
       {/* 2. Hero Carousel Banner: Festive Glow Face Cream Edit */}
@@ -134,6 +124,7 @@ export default function Home() {
 
       {/* 12. Product Quick View & Detailed Routine Modal */}
       <ProductDetailModal
+        key={quickViewProduct?.id || "quick-view"}
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
         onSelectProduct={(p) => setQuickViewProduct(p)}
@@ -145,13 +136,6 @@ export default function Home() {
 
       {/* 14. Toast Notification Pill */}
       <Toast />
-
-      {/* 15. Mobile Bottom App Navigation */}
-      <MobileBottomNav
-        onOpenSearch={() => setIsSearchOpen(true)}
-        onScrollToTop={scrollToTop}
-        onScrollToCategories={scrollToCategories}
-      />
     </div>
   );
 }

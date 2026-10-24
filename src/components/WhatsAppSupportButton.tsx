@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { MessageCircle, X } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function WhatsAppSupportButton() {
   const [showTooltip, setShowTooltip] = useState(true);
@@ -12,7 +12,7 @@ export default function WhatsAppSupportButton() {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-40 flex items-end gap-2 group">
+    <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-40 flex items-end gap-2 group">
       {/* Interactive Tooltip Callout */}
       {showTooltip && (
         <div className="hidden sm:flex items-center gap-2 bg-white text-zinc-800 text-xs py-2 px-3 rounded-2xl shadow-xl border border-zinc-200 animate-fade-in">

@@ -5,7 +5,7 @@ import { JOURNAL_ARTICLES } from "@/data/faceCreams";
 import { BookOpen, ArrowRight, X } from "lucide-react";
 
 export default function JournalSection() {
-  const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<typeof JOURNAL_ARTICLES[0] | null>(null);
 
   return (
     <section className="py-4 sm:py-6 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">

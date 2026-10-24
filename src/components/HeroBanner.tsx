@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, ArrowRight } from "lucide-react";
 import FaceCreamJar from "./FaceCreamJar";
-import { FACE_CREAMS } from "@/data/faceCreams";
+import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
 
 interface HeroBannerProps {
   onShopNow: () => void;
-  onOpenQuickView: (product: any) => void;
+  onOpenQuickView: (product: FaceCream) => void;
 }
 
 export default function HeroBanner({ onShopNow, onOpenQuickView }: HeroBannerProps) {
