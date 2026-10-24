@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import WhatsAppSupportButton from "@/components/WhatsAppSupportButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#FAF9F6] text-zinc-900 font-sans selection:bg-amber-200 selection:text-amber-900 overflow-x-hidden w-full max-w-full">
         <AuthProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            {children}
+            <WhatsAppSupportButton />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

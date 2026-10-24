@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import UserAvatar from "@/components/UserAvatar";
+import { isAdminEmail } from "@/lib/adminAuth";
 import {
   Menu,
   X,
@@ -228,6 +229,21 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
                       </div>
 
                       <div className="space-y-1.5 text-zinc-700 pt-1">
+                        {isAdminEmail(user.email) && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setAccountMenuOpen(false)}
+                            className="py-1.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold flex items-center justify-between transition border border-amber-200/80 mb-1"
+                          >
+                            <span className="flex items-center gap-2">
+                              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                              Admin Console
+                            </span>
+                            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950">
+                              Admin
+                            </span>
+                          </Link>
+                        )}
                         <Link
                           href="/orders"
                           onClick={() => setAccountMenuOpen(false)}

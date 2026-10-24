@@ -20,12 +20,19 @@ export interface IOrder extends Document {
   totalAmount: number;
   paymentMethod: "razorpay" | "cod";
   shippingAddress?: {
+    fullName?: string;
+    email?: string;
     street?: string;
+    flatBuilding?: string;
+    streetArea?: string;
+    landmark?: string;
     city?: string;
     state?: string;
     pincode?: string;
     phone?: string;
   };
+  trackingNumber?: string;
+  courierPartner?: string;
   status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   paymentId?: string;
   razorpayOrderId?: string;
@@ -58,12 +65,19 @@ const OrderSchema = new Schema<IOrder>(
       default: "razorpay",
     },
     shippingAddress: {
+      fullName: String,
+      email: String,
       street: String,
+      flatBuilding: String,
+      streetArea: String,
+      landmark: String,
       city: String,
       state: String,
       pincode: String,
       phone: String,
     },
+    trackingNumber: { type: String },
+    courierPartner: { type: String, default: "Delhivery Express" },
     status: {
       type: String,
       enum: ["pending", "paid", "shipped", "delivered", "cancelled"],
