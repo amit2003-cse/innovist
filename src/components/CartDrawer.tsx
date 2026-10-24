@@ -453,7 +453,7 @@ export default function CartDrawer() {
         orderData.key_id ||
         process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
         process.env.RAZORPAY_KEY_ID ||
-        "rzp_test_Tq57o2d7vWhs1N";
+        "rzp_live_TrhchmaNWAgiMV";
 
       const options = {
         key: keyId,
