@@ -9,6 +9,7 @@ import FaceCreamJar from "@/components/FaceCreamJar";
 import Header from "@/components/Header";
 import FooterAccordion from "@/components/FooterAccordion";
 import CartDrawer from "@/components/CartDrawer";
+import TrustBadges from "@/components/TrustBadges";
 import SearchModal from "@/components/SearchModal";
 import AuthModal from "@/components/AuthModal";
 import Toast from "@/components/Toast";
@@ -358,6 +359,11 @@ function ProductDetailContent() {
                   Please enter a valid 6-digit Indian delivery pincode.
                 </p>
               )}
+            </div>
+
+            {/* Risk Reversal Guarantee Badges (CRO Feature 6) */}
+            <div className="pt-1">
+              <TrustBadges variant="full" />
             </div>
           </div>
         </div>
@@ -724,14 +730,15 @@ function ProductDetailContent() {
 
       {/* 7. FULL-WIDTH STICKY YELLOW ADD TO CART BUTTON (Matches Image 1 Exactly) */}
       <div className="fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-30 shadow-lg">
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-4xl mx-auto space-y-2">
           <button
             onClick={handleAddAndOpenCart}
-            className="w-full py-3.5 px-6 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wide uppercase transition flex items-center justify-center gap-2 shadow-xs active:scale-98"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wide uppercase transition flex items-center justify-center gap-2 shadow-xs active:scale-98 cursor-pointer"
           >
             <ShoppingBag className="w-5 h-5" />
             <span>{inCart ? "In Bag • Add Another" : "Add to Cart"}</span>
           </button>
+          <TrustBadges variant="strip" />
         </div>
       </div>
 

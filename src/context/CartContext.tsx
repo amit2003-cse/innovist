@@ -105,12 +105,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const applyCoupon = (code: string): boolean => {
     const cleanCode = code.trim().toUpperCase();
-    if (cleanCode === "FLAT20" || cleanCode === "INNOVIST20" || cleanCode === "GLOW20") {
+    if (cleanCode === "EXTRA50" || cleanCode === "SAVE50") {
+      setAppliedCoupon(cleanCode);
+      showToast(`Coupon "${cleanCode}" applied! ₹50 extra discount unlocked.`);
+      return true;
+    } else if (cleanCode === "FLAT20" || cleanCode === "INNOVIST20" || cleanCode === "GLOW20") {
       setAppliedCoupon(cleanCode);
       showToast(`Coupon "${cleanCode}" applied! 20% discount unlocked.`);
       return true;
+    } else if (cleanCode === "SAVE10") {
+      setAppliedCoupon(cleanCode);
+      showToast(`Coupon "${cleanCode}" applied! 10% discount unlocked.`);
+      return true;
     } else {
-      showToast(`Invalid coupon code. Try FLAT20.`);
+      showToast(`Invalid coupon code. Try FLAT20 or EXTRA50.`);
       return false;
     }
   };
@@ -120,7 +128,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     showToast("Coupon removed.");
   };
 
-  const discountRate = appliedCoupon ? 0.2 : 0;
   const freeShippingThreshold = 499;
 
   const subtotal = items.reduce(
@@ -128,8 +135,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     0
   );
 
-  const discountAmount = Math.round(subtotal * discountRate);
-  const afterDiscount = subtotal - discountAmount;
+  const isFlat50 = appliedCoupon === "EXTRA50" || appliedCoupon === "SAVE50";
+  const is10Percent = appliedCoupon === "SAVE10";
+  const discountRate = isFlat50 ? 0 : is10Percent ? 0.1 : appliedCoupon ? 0.2 : 0;
+  const discountAmount = isFlat50
+    ? Math.min(subtotal, 50)
+    : Math.round(subtotal * discountRate);
+
+  const afterDiscount = Math.max(0, subtotal - discountAmount);
   const shippingFee = subtotal === 0 || afterDiscount >= freeShippingThreshold ? 0 : 49;
   const total = Math.max(0, afterDiscount + shippingFee);
 

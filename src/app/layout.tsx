@@ -4,6 +4,8 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import WhatsAppSupportButton from "@/components/WhatsAppSupportButton";
+import SocialProofToast from "@/components/SocialProofToast";
+import ExitIntentModal from "@/components/ExitIntentModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +44,8 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             {children}
+            <SocialProofToast />
+            <ExitIntentModal />
             <WhatsAppSupportButton />
           </CartProvider>
         </AuthProvider>

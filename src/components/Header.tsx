@@ -51,27 +51,58 @@ export default function Header({ onOpenSearch, onSelectCategory }: HeaderProps) 
     }));
   };
 
-  // 1. Top Announcement Bar - changes every 3 seconds (Website Only)
+  // Live Cutoff Countdown for Same-Day Dispatch (Persistent daily cutoff at 5:00 PM)
+  const [dispatchCountdown, setDispatchCountdown] = useState<string>("");
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      const cutoff = new Date();
+      cutoff.setHours(17, 0, 0, 0); // 5:00 PM cutoff
+      if (now.getTime() > cutoff.getTime()) {
+        cutoff.setDate(cutoff.getDate() + 1);
+      }
+      const diffMs = cutoff.getTime() - now.getTime();
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+      setDispatchCountdown(
+        `${String(hours).padStart(2, "0")}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(2, "0")}s`
+      );
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 1. Top Announcement Bar - changes every 3.5 seconds
   const announcements = [
     {
-      id: "offer-35",
-      text: "Unlock upto 35% OFF on orders > ₹849. Shop Now!",
-      hasIcon: false,
-    },
-    {
-      id: "fraud-alert",
-      text: "Beware of Fraud Calls: Pay Only Via Our Official Website",
+      id: "same-day-dispatch",
+      text: dispatchCountdown
+        ? `⚡ Order within ${dispatchCountdown} for Same-Day Dispatch!`
+        : "⚡ Order within 4 hrs for Same-Day Dispatch!",
+      isUrgent: true,
       hasIcon: true,
     },
     {
       id: "coupon-20",
-      text: "FLAT 20% OFF on All Face Creams | Code: FLAT20",
+      text: "FLAT 20% OFF on All Face Creams & Washes | Code: FLAT20",
+      isUrgent: false,
       hasIcon: false,
     },
     {
       id: "free-shipping",
       text: "Free Express Shipping On All Orders Above ₹499",
+      isUrgent: false,
       hasIcon: false,
+    },
+    {
+      id: "fraud-alert",
+      text: "Beware of Fraud Calls: Pay Only Via Our Official Website",
+      isUrgent: false,
+      hasIcon: true,
     },
   ];
 

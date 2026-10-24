@@ -8,6 +8,8 @@ import FaceCreamJar from "./FaceCreamJar";
 import OrderConfirmationModal, { ConfirmedOrderData } from "./OrderConfirmationModal";
 import { loadRazorpayScript, RazorpayResponse } from "@/lib/razorpay";
 import { lookupPincode } from "@/lib/pincode";
+import { FACE_CREAMS, FaceCream } from "@/data/faceCreams";
+import TrustBadges from "./TrustBadges";
 import {
   ChevronLeft,
   Plus,
@@ -26,7 +28,10 @@ import {
   Building,
   Home,
   Briefcase,
-  CheckCircle2
+  CheckCircle2,
+  Flame,
+  Zap,
+  Clock
 } from "lucide-react";
 
 export default function CartDrawer() {
@@ -34,6 +39,7 @@ export default function CartDrawer() {
   const { user } = useAuth();
   const {
     items,
+    addToCart,
     isCartOpen,
     setIsCartOpen,
     updateQuantity,
@@ -55,6 +61,62 @@ export default function CartDrawer() {
   const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // 15-Minute Persistent Cart Reservation Timer (CRO Feature 1)
+  const [cartSecondsLeft, setCartSecondsLeft] = useState(15 * 60);
+
+  useEffect(() => {
+    if (items.length === 0) return;
+
+    try {
+      const storedExpiry = localStorage.getItem("innovist_cart_reserve_expiry");
+      const now = Date.now();
+      let targetTime = storedExpiry ? parseInt(storedExpiry, 10) : 0;
+
+      if (!targetTime || targetTime <= now) {
+        targetTime = now + 15 * 60 * 1000;
+        localStorage.setItem("innovist_cart_reserve_expiry", targetTime.toString());
+      }
+
+      const updateTimer = () => {
+        const remaining = Math.max(0, Math.floor((targetTime - Date.now()) / 1000));
+        setCartSecondsLeft(remaining);
+      };
+
+      updateTimer();
+      const interval = setInterval(updateTimer, 1000);
+      return () => clearInterval(interval);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [items.length]);
+
+  // 10-Minute Prepaid/UPI Priority Dispatch Timer (CRO Feature 1)
+  const [prepaidSecondsLeft, setPrepaidSecondsLeft] = useState(10 * 60);
+
+  useEffect(() => {
+    try {
+      const storedPrepaid = localStorage.getItem("innovist_prepaid_timer_expiry");
+      const now = Date.now();
+      let targetTime = storedPrepaid ? parseInt(storedPrepaid, 10) : 0;
+
+      if (!targetTime || targetTime <= now) {
+        targetTime = now + 10 * 60 * 1000;
+        localStorage.setItem("innovist_prepaid_timer_expiry", targetTime.toString());
+      }
+
+      const updateTimer = () => {
+        const remaining = Math.max(0, Math.floor((targetTime - Date.now()) / 1000));
+        setPrepaidSecondsLeft(remaining);
+      };
+
+      updateTimer();
+      const interval = setInterval(updateTimer, 1000);
+      return () => clearInterval(interval);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   // Confirmed Order Modal State
   const [confirmedOrder, setConfirmedOrder] = useState<ConfirmedOrderData | null>(null);
@@ -494,6 +556,17 @@ export default function CartDrawer() {
 
   const totalItemsCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
+  // 1-Click In-Cart Upsell ("Frequently Paired Together" - CRO Feature 4)
+  const cartItemIds = new Set(items.map((it) => it.product.id));
+  const hasFaceWash = items.some((it) => it.product.category === "face-wash");
+  const upsellProducts = FACE_CREAMS.filter((p) => !cartItemIds.has(p.id))
+    .sort((a, b) => {
+      if (hasFaceWash && a.category === "face-cream") return -1;
+      if (!hasFaceWash && a.category === "face-wash") return -1;
+      return 0;
+    })
+    .slice(0, 2);
+
   // If order confirmation is active, render the modal even if drawer is closed
   if (!isCartOpen && !confirmedOrder) return null;
 
@@ -535,31 +608,58 @@ export default function CartDrawer() {
               </button>
             </div>
 
+            {/* 15-Minute Persistent Cart Reservation Timer (CRO Feature 1) */}
+            {items.length > 0 && (
+              <div className="bg-amber-500/15 border-b border-amber-500/30 px-3 py-1.5 flex items-center justify-between text-[11px] text-amber-950 font-bold shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5 text-rose-600 animate-pulse shrink-0" />
+                  <span>Items reserved in cart for:</span>
+                </div>
+                <div className="font-mono bg-amber-500/20 px-2 py-0.5 rounded-md text-amber-950 font-black flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-amber-700" />
+                  <span>
+                    {String(Math.floor(cartSecondsLeft / 60)).padStart(2, "0")}:{String(cartSecondsLeft % 60).padStart(2, "0")}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Top Banner */}
             <div className="bg-[#46403B] text-white py-2 px-3 text-center text-[10px] sm:text-xs font-bold tracking-wider uppercase shrink-0">
-              Pay Online & Get Up To 125 OFF
+              Pay Online & Get Up To ₹125 OFF
             </div>
 
-            {/* Free Shipping Progress Indicator */}
+            {/* Free Shipping Progress Indicator (CRO Feature 3) */}
             {items.length > 0 && (
               <div className="p-3 bg-amber-50/80 border-b border-amber-200/60 text-xs shrink-0">
                 {amountNeededForFreeShipping === 0 ? (
                   <p className="font-bold text-emerald-800 flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-emerald-600" />
-                    🎉 Congratulations! You unlocked <strong>FREE Shipping</strong>!
+                    <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>🎉 Congratulations! You unlocked <strong>FREE Delivery</strong>!</span>
                   </p>
                 ) : (
-                  <p className="font-semibold text-amber-950">
-                    Add <strong className="text-zinc-900">₹{amountNeededForFreeShipping}</strong> more to unlock <strong>FREE Shipping</strong>!
+                  <p className="font-semibold text-amber-950 flex items-center justify-between">
+                    <span>
+                      Add <strong className="text-zinc-900">₹{amountNeededForFreeShipping}</strong> more to unlock <strong>FREE Delivery</strong>!
+                    </span>
+                    <Truck className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                   </p>
                 )}
-                <div className="w-full bg-amber-200/60 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div className="w-full bg-amber-200/60 h-2 rounded-full mt-2 overflow-hidden">
                   <div
-                    className="bg-amber-500 h-full rounded-full transition-all duration-300"
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      amountNeededForFreeShipping === 0
+                        ? "bg-emerald-500"
+                        : "bg-gradient-to-r from-amber-500 to-amber-600"
+                    }`}
                     style={{
-                      width: `${Math.min(100, (subtotal / freeShippingThreshold) * 100)}%`,
+                      width: `${Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100))}%`,
                     }}
                   />
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-zinc-500 mt-1 font-medium">
+                  <span>Cart: ₹{subtotal}</span>
+                  <span>{Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100))}% towards Free Delivery (₹{freeShippingThreshold})</span>
                 </div>
               </div>
             )}
@@ -677,6 +777,60 @@ export default function CartDrawer() {
                     </button>
                   </div>
                 ))}
+
+                {/* 1-Click In-Cart Upsell ("Frequently Paired Together" - CRO Feature 4) */}
+                {upsellProducts.length > 0 && (
+                  <div className="bg-gradient-to-b from-amber-50/60 to-white rounded-2xl border border-amber-200/80 p-3 space-y-2.5 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-500 shrink-0" />
+                        <h4 className="text-[11px] font-black uppercase tracking-wider text-zinc-900">
+                          Frequently Paired Together
+                        </h4>
+                      </div>
+                      <span className="text-[10px] font-bold text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded-full">
+                        1-Click Add
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {upsellProducts.map((p) => (
+                        <div
+                          key={p.id}
+                          className="flex items-center justify-between gap-2.5 p-2 bg-white rounded-xl border border-zinc-200/90 shadow-2xs"
+                        >
+                          <div className="w-9 h-9 shrink-0 flex items-center justify-center">
+                            <FaceCreamJar product={p} size="sm" />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="font-extrabold text-[11px] text-zinc-900 truncate">{p.name}</div>
+                            <div className="text-[9px] text-zinc-500 truncate">{p.subtitle || p.size}</div>
+                            <div className="flex items-baseline gap-1.5 mt-0.5">
+                              <span className="text-xs font-black text-zinc-900">₹{p.price}</span>
+                              <span className="text-[9px] text-zinc-400 line-through">₹{p.originalPrice}</span>
+                              <span className="text-[9px] font-bold text-emerald-600">
+                                {Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)}% OFF
+                              </span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              addToCart(p, 1);
+                              showToast(`Added ${p.name} to cart!`);
+                            }}
+                            className="px-2.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-zinc-950 text-[10px] font-black rounded-lg transition shrink-0 flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95"
+                          >
+                            <Plus className="w-3 h-3" />
+                            <span>Add</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Comprehensive Delivery Address Form (P0 Requirement) */}
                 <div className="bg-zinc-50 rounded-2xl border border-zinc-200 p-3 text-xs space-y-2.5">
@@ -938,6 +1092,24 @@ export default function CartDrawer() {
                   )}
                 </div>
 
+                {/* 10-Minute Prepaid/UPI Priority Dispatch Timer (CRO Feature 1) */}
+                <div className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200 text-emerald-950 flex items-center justify-between text-[11px]">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-emerald-600 fill-emerald-500 shrink-0" />
+                    <div>
+                      <div className="font-extrabold text-emerald-950 leading-tight">
+                        Pay Online for Priority Dispatch!
+                      </div>
+                      <div className="text-[10px] text-emerald-800">
+                        Zero COD hassle • Guaranteed priority same-day dispatch
+                      </div>
+                    </div>
+                  </div>
+                  <div className="font-mono bg-emerald-700 text-white px-2 py-0.5 rounded-md font-black text-[10px] shrink-0 tracking-wider">
+                    {String(Math.floor(prepaidSecondsLeft / 60)).padStart(2, "0")}:{String(prepaidSecondsLeft % 60).padStart(2, "0")}
+                  </div>
+                </div>
+
                 {/* Payment Method Selector (COD vs Razorpay) */}
                 <div className="pt-1">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1.5">
@@ -956,7 +1128,7 @@ export default function CartDrawer() {
                       <CreditCard className="w-4 h-4 shrink-0" />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold leading-tight">Pay Online</div>
-                        <div className="text-[9px] opacity-75 truncate">UPI / Cards</div>
+                        <div className="text-[9px] opacity-75 truncate">UPI / Cards / Priority</div>
                       </div>
                     </button>
 
@@ -972,7 +1144,7 @@ export default function CartDrawer() {
                       <Banknote className="w-4 h-4 shrink-0" />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold leading-tight">Cash on Delivery</div>
-                        <div className="text-[9px] opacity-75 truncate">Pay at Doorstep</div>
+                        <div className="text-[9px] opacity-75 truncate">Standard Courier</div>
                       </div>
                     </button>
                   </div>
@@ -986,7 +1158,7 @@ export default function CartDrawer() {
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between text-emerald-700 font-semibold">
-                      <span>FLAT20 Savings</span>
+                      <span>Coupon Savings ({appliedCoupon})</span>
                       <span>-₹{discountAmount}</span>
                     </div>
                   )}
@@ -1010,7 +1182,7 @@ export default function CartDrawer() {
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessing}
-                  className={`w-full py-2.5 px-4 rounded-full font-extrabold text-xs tracking-wide transition shadow-md flex items-center justify-center gap-1.5 transform active:scale-98 ${
+                  className={`w-full py-2.5 px-4 rounded-full font-extrabold text-xs tracking-wide transition shadow-md flex items-center justify-center gap-1.5 transform active:scale-98 cursor-pointer ${
                     isProcessing
                       ? "bg-zinc-400 cursor-not-allowed text-white"
                       : paymentMethod === "razorpay"
@@ -1036,12 +1208,10 @@ export default function CartDrawer() {
                   )}
                 </button>
 
-                <p className="text-[9px] text-center text-zinc-400 flex items-center justify-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                  {paymentMethod === "razorpay"
-                    ? "Secure 256-bit encrypted Razorpay payment"
-                    : "100% Genuine products • Cash payment on delivery"}
-                </p>
+                {/* Risk Reversal Trust Badges (CRO Feature 6) */}
+                <div className="pt-1">
+                  <TrustBadges variant="compact" />
+                </div>
               </div>
             )}
           </div>

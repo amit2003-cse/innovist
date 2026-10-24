@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaceCream } from "@/data/faceCreams";
 import { useCart } from "@/context/CartContext";
 import FaceCreamJar from "./FaceCreamJar";
+import TrustBadges from "./TrustBadges";
 import {
   X,
   Star,
@@ -658,18 +659,24 @@ export default function ProductDetailModal({
                 ))}
               </div>
             </div>
+
+            {/* Risk Reversal Guarantee Badges (CRO Feature 6) */}
+            <div className="pt-2">
+              <TrustBadges variant="full" />
+            </div>
           </div>
         </div>
 
         {/* 10. FULL-WIDTH STICKY YELLOW ADD TO CART BUTTON (Matches Image 1 Exactly) */}
-        <div className="sticky bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-50 shadow-lg">
+        <div className="sticky bottom-0 left-0 right-0 p-3 bg-white border-t border-zinc-200 z-50 shadow-lg space-y-2">
           <button
             onClick={handleAddAndOpenCart}
-            className="w-full py-3.5 px-6 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wide uppercase transition flex items-center justify-center gap-2 shadow-xs active:scale-98"
+            className="w-full py-3.5 px-6 rounded-xl bg-[#FFCC00] hover:bg-[#EBB800] text-zinc-950 font-black text-sm tracking-wide uppercase transition flex items-center justify-center gap-2 shadow-xs active:scale-98 cursor-pointer"
           >
             <ShoppingBag className="w-5 h-5" />
             <span>{inCart ? "In Bag • Add Another" : "Add to Cart"}</span>
           </button>
+          <TrustBadges variant="strip" />
         </div>
       </div>
     </div>

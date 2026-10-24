@@ -16,17 +16,19 @@ export default function SelfCareShelf({
   onQuickView,
   onViewAll,
 }: SelfCareShelfProps) {
-  const [shelfFilter, setShelfFilter] = useState<string>("barrier");
+  const [shelfFilter, setShelfFilter] = useState<string>("face-wash");
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const shelfTabs = [
-    { id: "barrier", label: "Barrier Care", icon: "🛡️" },
-    { id: "brightening", label: "Skin Care", icon: "🍊" },
-    { id: "sun-cream", label: "Sun Care", icon: "☀️" },
-    { id: "hydra", label: "Hydra Gel", icon: "💧" },
+    { id: "face-wash", label: "Face Washes", icon: "🧼" },
+    { id: "face-cream", label: "Face Creams", icon: "🧴" },
+    { id: "all", label: "All Formulations", icon: "✨" },
   ];
 
-  const filteredProducts = products.filter((p) => p.category === shelfFilter);
+  const filteredProducts =
+    shelfFilter === "all"
+      ? products
+      : products.filter((p) => p.category === shelfFilter);
 
   const scroll = (direction: "left" | "right") => {
     if (sliderRef.current) {

@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
-}
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  "mongodb+srv://amit4321sg_db_user:kuo9zVYJIxrzcilF@cluster0.vm9mpoi.mongodb.net/innovist?retryWrites=true&w=majority";
 
 interface MongooseCache {
   conn: typeof mongoose | null;
